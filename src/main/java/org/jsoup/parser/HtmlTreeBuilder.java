@@ -1,5 +1,6 @@
 package org.jsoup.parser;
 
+import org.hpar.tag;
 import org.jsoup.helper.StringUtil;
 import org.jsoup.helper.Validate;
 import org.jsoup.nodes.*;
@@ -12,6 +13,7 @@ import java.util.List;
  * HTML Tree Builder; creates a DOM from Tokens.
  */
 public class HtmlTreeBuilder extends TreeBuilder {
+
     // tag searches
     private static final String[] TagsScriptStyle = new String[]{"script", "style"};
     public static final String[] TagsSearchInScope = new String[]{"applet", "caption", "html", "table", "td", "th", "marquee", "object"};
@@ -45,6 +47,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
     private boolean fragmentParsing = false; // if parsing a fragment of html
 
     HtmlTreeBuilder() {}
+
 
     @Override
     Document parse(String input, String baseUri, ParseErrorList errors) {
@@ -699,5 +702,11 @@ public class HtmlTreeBuilder extends TreeBuilder {
                 ", state=" + state +
                 ", currentElement=" + currentElement() +
                 '}';
+    }
+
+
+    public Document parsePart(String string, int pos) {
+
+        return null;
     }
 }

@@ -13,7 +13,20 @@ public class YetAnotherLexer {
     private int pos;
     private int data_begin, data_end;
 
-    private List<tag> tags = new ArrayList<tag>();
+    public interface Callback {
+        void find(tag t);
+    }
+    public Callback callback;
+
+    tag tags = null;
+    tag tail = null;
+
+    public YetAnotherLexer(String data) {
+        this.data = data.toCharArray();
+        this.data_begin = 0;
+        this.data_end = data.length();
+        reset();
+    }
 
     public YetAnotherLexer(String data, int data_begin, int data_end) {
         this.data = data.toCharArray();
@@ -25,37 +38,6 @@ public class YetAnotherLexer {
     public void reset() {
         pos = data_begin;
     }
-
-    public boolean match() {
-        Stack<tag> stack = new Stack<tag>();
-        boolean ans = true;
-        for (tag t: tags) {
-            if (t.type == tag.self_end) continue;
-            if ((t.type & 1) != 0) { stack.push(t); }
-            else {
-                if (stack.empty() || stack.peek().type != t.type - 1) {
-                    ans = false;
-                    continue;
-                }
-                tag s = stack.pop();
-                s.match = t;
-                t.match = s;
-            }
-        }
-        return ans;
-    }
-
-    public boolean isInRightPlace(int p) {
-        for (tag t: tags) {
-            if (t.match != null && (t.type==1 || t.type == 3)) {
-                int b = t.pos;
-                int e = t.match.pos+t.match.size;
-                if (p >= b && p < e) return true;
-            }
-        }
-        return false;
-    }
-
 
     private void skipSpace() {
         while (pos < data_end) {
@@ -80,13 +62,23 @@ public class YetAnotherLexer {
     }
 
     public void print() {
-        for (tag t: tags) {
+        for (tag t = tags; t!=null; t=t.next) {
             System.out.println("Match: "+String.copyValueOf(data, t.pos, t.size));
             System.out.println("from: "+t.pos+" - "+(t.pos+t.size));
         }
     }
 
-    public List<tag> find() {
+    private void addTail(tag t) {
+        tail.next = t; tail = t;
+        if (tags == null) tags = tail;
+    }
+
+    private void findOtherBegin(tag t) {
+        addTail(t);
+        callback.find(t);
+    }
+
+    public tag find() {
         reset();
         boolean tag_open = false;
         boolean comment_open = false;
@@ -101,11 +93,11 @@ public class YetAnotherLexer {
                         if (findScriptClose(first))
                             tag_open = false;
                         else
-                            tags.add(new tag(first, pos, tag.other_end));
+                            findOtherBegin(new tag(first, pos, tag.other_end));
                     } else if (data[pos] == '!' && pos+2 < data_end
                             && data[pos+1]=='-' && data[pos+2]=='-') {
                         pos += 3;
-                        tags.add(new tag(first, pos, tag.comment_begin));
+                        addTail(new tag(first, pos, tag.comment_begin));
                         comment_open = true;
                     } else {
                         if (findScript(first))
@@ -116,7 +108,7 @@ public class YetAnotherLexer {
                     if (tag_open) { ++pos; break; }
                     if (pos+2 < data_end
                             && data[pos+1]=='-' && data[pos+2]=='>') {
-                        tags.add(new tag(pos, pos+3, tag.comment_end));
+                        addTail(new tag(pos, pos+3, tag.comment_end));
                         pos += 2;
                         comment_open = false;
                     }
@@ -138,10 +130,8 @@ public class YetAnotherLexer {
     private static char[] style = "yle".toCharArray();
 
 
-
-    private boolean findScript(int begin) {
+    private boolean findSome() {
         boolean ans = true;
-        skipSpace();
         if (!(pos < data_end && data[pos] == 's')) ans = false;
         else {
             ++pos;
@@ -159,46 +149,36 @@ public class YetAnotherLexer {
                 }
             } else ans = false;
         }
+        return ans;
+    }
+
+    private boolean findScript(int begin) {
+        skipSpace();
+        boolean ans = findSome();
+
         while (pos < data_end && data[pos] != '>') ++pos;
         int end = ++pos;
 
         if (data[pos-1] == '/') {
-            tags.add(new tag(begin, end, tag.self_end));
+            addTail(new tag(begin, end, tag.self_end));
             return false;
         }
-        if (ans == false) {
-            tags.add(new tag(begin, end, tag.other_begin));
+        if (!ans) {
+            addTail(new tag(begin, end, tag.other_begin));
             return false;
         }
-        tags.add(new tag(begin, end, tag.script_begin));
+        addTail(new tag(begin, end, tag.script_begin));
         return true;
     }
 
 
     private boolean findScriptClose(int begin) {
-        boolean ans = true;
         skipSpace();
-        if (!(pos < data_end && data[pos] == 's')) ans = false;
-        else {
-            ++pos;
-            if (data[pos] == 'c') {
-                ++pos;
-                for (char c : script) {
-                    if (pos < data_end && data[pos] == c) ++pos;
-                    else ans = false;
-                }
-            } else if (data[pos] == 't') {
-                ++pos;
-                for (char c : style) {
-                    if (pos < data_end && data[pos] == c) ++pos;
-                    else ans = false;
-                }
-            } else ans = false;
-        }
+        boolean ans = findSome();
         skipSpace();
         if (pos < data_end && data[pos] == '>') {
             int end = ++pos;
-            tags.add(new tag(begin, end, tag.script_end));
+            addTail(new tag(begin, end, tag.script_end));
             return ans;
         }
         while (pos < data_end && data[pos] != '>') ++pos;

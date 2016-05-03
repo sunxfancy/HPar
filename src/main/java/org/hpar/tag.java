@@ -10,7 +10,7 @@ public class tag {
     int pos;
     int size;
     int type;
-    public tag match;
+    public int end;
     public tag next = null;
 
     Element element = null;
@@ -30,12 +30,13 @@ public class tag {
     }
 
 
-    public static final int script_begin = 1;
-    public static final int script_end = 2;
-    public static final int comment_begin = 3;
-    public static final int comment_end = 4;
-    public static final int other_begin = 5;
-    public static final int other_end = 6;
+    static final int script_begin = 1;
+    static final int script_end = 2;
+    static final int comment_begin = 3;
+    static final int comment_end = 4;
+    static final int other_begin = 5;
+    static final int other_end = 6;
 
-    public static final int self_end = 250;
+    static final int self_end = 250;
+
 }
