@@ -14,6 +14,18 @@ import java.util.List;
  */
 public class HtmlTreeBuilder extends TreeBuilder {
 
+    // sxf added
+    private tag tags;
+
+    public Document parsePart(String string, int pos, tag now) {
+        this.tags = now;
+
+        return null;
+    }
+
+
+    // ---------------------------------------------------
+
     // tag searches
     private static final String[] TagsScriptStyle = new String[]{"script", "style"};
     public static final String[] TagsSearchInScope = new String[]{"applet", "caption", "html", "table", "td", "th", "marquee", "object"};
@@ -705,8 +717,4 @@ public class HtmlTreeBuilder extends TreeBuilder {
     }
 
 
-    public Document parsePart(String string, int pos) {
-
-        return null;
-    }
 }

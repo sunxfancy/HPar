@@ -1,5 +1,6 @@
 package org.hpar;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 /**
@@ -29,7 +30,6 @@ public class tag {
         this.type = type;
     }
 
-
     static final int script_begin = 1;
     static final int script_end = 2;
     static final int comment_begin = 3;
@@ -38,5 +38,4 @@ public class tag {
     static final int other_end = 6;
 
     static final int self_end = 250;
-
 }

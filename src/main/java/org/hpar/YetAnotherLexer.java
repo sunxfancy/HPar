@@ -75,7 +75,8 @@ public class YetAnotherLexer {
 
     private void findOtherBegin(tag t) {
         addTail(t);
-        callback.find(t);
+        if (callback != null)
+            callback.find(t);
     }
 
     public tag find() {

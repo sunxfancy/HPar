@@ -9,13 +9,13 @@ import org.jsoup.nodes.Document;
 public class ParallelJsoup {
     tag tags;
     String data;
-    Worker worker = new Worker();
+    Worker worker;
     public static final int span = 1024;
 
     public ParallelJsoup(String data) {
         this.data = data;
+        worker = new Worker(data);
     }
-
 
     public Document parse() {
         YetAnotherLexer lexer = new YetAnotherLexer(data);
