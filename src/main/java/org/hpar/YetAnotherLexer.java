@@ -1,9 +1,5 @@
 package org.hpar;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
 /**
  *
  * Created by sxf on 4/27/16.
@@ -69,7 +65,8 @@ public class YetAnotherLexer {
     }
 
     private void addTail(tag t) {
-        tail.next = t; tail = t;
+        if (tail != null) tail.next = t;
+        tail = t;
         if (tags == null) tags = tail;
     }
 
@@ -143,7 +140,7 @@ public class YetAnotherLexer {
                     else ans = false;
                 }
             } else if (data[pos] == 't') {
-                ++pos;
+            ++pos;
                 for (char c : style) {
                     if (pos < data_end && data[pos] == c) ++pos;
                     else ans = false;

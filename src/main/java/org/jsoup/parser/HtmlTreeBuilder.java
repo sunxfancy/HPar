@@ -17,6 +17,14 @@ public class HtmlTreeBuilder extends TreeBuilder {
     // sxf added
     private tag tags;
 
+    public Document parseFull(String string, tag now) {
+        this.tags = now;
+        state = HtmlTreeBuilderState.Initial;
+        baseUriSetFromDoc = false;
+        System.out.println(string);
+        return super.parse(string, "", errors);
+    }
+
     public Document parsePart(String string, int pos, tag now) {
         this.tags = now;
 

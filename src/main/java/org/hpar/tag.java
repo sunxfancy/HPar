@@ -16,12 +16,20 @@ public class tag {
 
     Element element = null;
 
-    public Element getElement() {
+    public synchronized Element getElement() {
+        if (element == null) {
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+//                e.printStackTrace();
+            }
+        }
         return element;
     }
 
-    public void setElement(Element element) {
+    public synchronized void setElement(Element element) {
         this.element = element;
+        this.notifyAll();
     }
 
     public tag(int begin, int end, int type) {

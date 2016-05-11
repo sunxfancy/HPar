@@ -23,8 +23,10 @@ public class ParallelJsoup {
             worker.run(t);
         };
         tags = lexer.tags;
+        tag t = new tag(0, 0, tag.other_begin);
+        t.next = tags;
+        worker.run(t);
         lexer.find();
-
-        return null;
+        return worker.getAll();
     }
 }

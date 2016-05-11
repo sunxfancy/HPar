@@ -1,5 +1,7 @@
 package org.hpar;
 
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.parser.PartParser;
 
 import java.util.concurrent.ExecutorService;
@@ -12,13 +14,19 @@ import java.util.concurrent.Executors;
 public class Worker {
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private String data;
-
+    private Job mainJob;
     public Worker(String data) {
         this.data = data;
     }
 
     public void run(tag t) {
-        threadPool.execute(new Job(t, data));
+        Job j = new Job(t, data);
+        if (t.pos == 0) mainJob = j;
+        threadPool.execute(j);
+    }
+
+    public Document getAll() {
+        return (Document) mainJob.tags.getElement();
     }
 }
 
@@ -33,6 +41,12 @@ class Job implements Runnable {
 
     @Override
     public void run() {
-        tags.setElement(PartParser.parse(data, tags.pos, tags));
+        Element element = null;
+        try{
+            element = PartParser.parse(data, tags.pos, tags);
+        }catch(Exception e) {
+
+        }
+        tags.setElement(element);
     }
 }

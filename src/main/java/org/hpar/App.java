@@ -19,8 +19,8 @@ public class App
             e.printStackTrace();
         }
 
-//        ParallelParser pp = new ParallelParser(data, 4);
-//        Document dd = pp.parse();
+        ParallelJsoup pp = new ParallelJsoup(data);
+        Document dd = pp.parse();
     }
 
     public static String readFile(String fileName) throws IOException {
