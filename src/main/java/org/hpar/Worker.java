@@ -30,6 +30,7 @@ public class Worker {
     }
 }
 
+
 class Job implements Runnable {
     tag tags;
     String data;
@@ -43,10 +44,12 @@ class Job implements Runnable {
     public void run() {
         Element element = null;
         try{
+            tags.setStatus(tag.WorkStatus.doing);
             element = PartParser.parse(data, tags.pos, tags);
         }catch(Exception e) {
 
         }
         tags.setElement(element);
+        tags.setStatus(tag.WorkStatus.done);
     }
 }

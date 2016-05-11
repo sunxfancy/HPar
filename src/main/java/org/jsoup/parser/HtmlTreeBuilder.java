@@ -20,9 +20,8 @@ public class HtmlTreeBuilder extends TreeBuilder {
     public Document parseFull(String string, tag now) {
         this.tags = now;
         state = HtmlTreeBuilderState.Initial;
-        baseUriSetFromDoc = false;
-        System.out.println(string);
-        return super.parse(string, "", errors);
+        Document document = super.parse(string, "", ParseErrorList.noTracking());
+        return document;
     }
 
     public Document parsePart(String string, int pos, tag now) {
@@ -31,6 +30,18 @@ public class HtmlTreeBuilder extends TreeBuilder {
         return null;
     }
 
+    @Override
+    protected void initialiseParse(String input, String baseUri, ParseErrorList errors) {
+        Validate.notNull(input, "String input must not be null");
+        Validate.notNull(baseUri, "BaseURI must not be null");
+
+        doc = new Document(baseUri);
+        reader = new CharacterReader(input, tags.pos, tags, this);
+        this.errors = errors;
+        tokeniser = new Tokeniser(reader, errors);
+        stack = new ArrayList<Element>(32);
+        this.baseUri = baseUri;
+    }
 
     // ---------------------------------------------------
 

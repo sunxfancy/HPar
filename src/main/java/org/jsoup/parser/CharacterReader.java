@@ -2,6 +2,7 @@ package org.jsoup.parser;
 
 import org.hpar.tag;
 import org.jsoup.helper.Validate;
+import org.jsoup.nodes.Element;
 
 import java.util.*;
 
@@ -20,17 +21,37 @@ final class CharacterReader {
 
     /// sxf added
     private tag tags;
-    private tag now_tag;
+    private tag nowtags;
+    private HtmlTreeBuilder htmlTreeBuilder;
     public void setTags(tag head) { this.tags = head; }
     public void setPos(int pos) { this.pos = pos; }
 
+    char consume() {
+        char val = pos >= length ? EOF : input[pos];
+        pos++;
 
-    CharacterReader(String input, int pos, tag now_tag) {
+        // sxf add
+        if (nowtags.next != null && pos >= nowtags.next.pos
+                && (nowtags.next.status==tag.WorkStatus.doing ||
+                    nowtags.next.status==tag.WorkStatus.done ))
+        {
+            nowtags = nowtags.next;
+            Element e = nowtags.getElement();
+            htmlTreeBuilder.insert(e);
+
+        }
+
+        return val;
+    }
+
+    CharacterReader(String input, int pos, tag now_tag, HtmlTreeBuilder htb) {
         Validate.notNull(input);
         this.input = input.toCharArray();
         this.length = this.input.length;
         this.pos = pos;
-        this.now_tag = now_tag;
+        this.tags = now_tag;
+        this.nowtags = now_tag;
+        this.htmlTreeBuilder = htb;
     }
 
     CharacterReader(String input) {
@@ -52,11 +73,7 @@ final class CharacterReader {
         return pos >= length ? EOF : input[pos];
     }
 
-    char consume() {
-        char val = pos >= length ? EOF : input[pos];
-        pos++;
-        return val;
-    }
+
 
     void unconsume() {
         pos--;

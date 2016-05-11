@@ -8,13 +8,26 @@ import org.jsoup.nodes.Element;
  * Created by sxf on 4/30/16.
  */
 public class tag {
-    int pos;
-    int size;
-    int type;
+    public int pos;
+    public int size;
+    public int type;
     public int end;
     public tag next = null;
 
+    public enum WorkStatus {
+        undo, doing, done
+    }
+
+    public WorkStatus status = WorkStatus.undo;
     Element element = null;
+
+    public synchronized void setStatus(WorkStatus status) {
+        this.status = status;
+    }
+
+    public synchronized WorkStatus getStatus() {
+        return this.status;
+    }
 
     public synchronized Element getElement() {
         if (element == null) {
