@@ -22,7 +22,8 @@ public class ParallelJsoup {
     public Document parse() {
         YetAnotherLexer lexer = new YetAnotherLexer(data);
         lexer.callback = (tag t) -> {
-            if (t.pos - lastt.pos >= span) {
+            if (t.pos - lastt.pos >= span && t.getStatus() == tag.WorkStatus.undo) {
+                t.setStatus(tag.WorkStatus.doing);
                 worker.run(t);
                 lastt = t;
             }
@@ -31,6 +32,7 @@ public class ParallelJsoup {
         tags = t;
         lexer.tail = lexer.tags = t;
         lastt = t;
+        t.setStatus(tag.WorkStatus.doing);
         worker.run(t);
         lexer.find();
         return worker.getAll();

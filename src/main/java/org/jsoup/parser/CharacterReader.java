@@ -6,6 +6,8 @@ import org.jsoup.nodes.Element;
 
 import java.util.*;
 
+import static org.hpar.tag.WorkStatus.done;
+
 /**
  CharacterReader consumes tokens off a string. To replace the old TokenQueue.
  */
@@ -27,18 +29,23 @@ final class CharacterReader {
     public void setPos(int pos) { this.pos = pos; }
 
     public void writepos() {
-        nowtags.end = pos;
+        System.out.println("writepos:"+pos);
+        tags.end = pos;
     }
 
     void checkTag() {
-        if (nowtags != null && nowtags.next != null && pos >= nowtags.next.pos
-                && nowtags.next.status!=tag.WorkStatus.undo)
+        while (nowtags != null && nowtags.next != null && pos >= nowtags.next.pos)
         {
-            System.out.println("jump to:"+pos);
             nowtags = nowtags.next;
-            Element e = nowtags.getElement();
-            htmlTreeBuilder.insert(e);
-            pos = nowtags.end;
+            if (nowtags.getStatus()==tag.WorkStatus.doing ||
+                    nowtags.getStatus()==tag.WorkStatus.done ) {
+                Element e = nowtags.getElement();
+                htmlTreeBuilder.insert(e);
+                System.out.println("jump from "+pos+" to "+nowtags.end);
+                pos = nowtags.end;
+            } else {
+                nowtags.setStatus(tag.WorkStatus.jump);
+            }
         }
     }
 
@@ -79,6 +86,8 @@ final class CharacterReader {
     }
 
     char current() {
+        // sxf add
+        checkTag();
         return pos >= length ? EOF : input[pos];
     }
 

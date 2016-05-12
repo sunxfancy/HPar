@@ -4,6 +4,8 @@ import junit.framework.TestCase;
 import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
 
+import java.io.FileWriter;
+
 /**
  *
  * Created by sxf on 5/11/16.
@@ -15,9 +17,14 @@ public class ParallelJsoupTest extends TestCase {
         ParallelJsoup pj = new ParallelJsoup(data);
         Document document = pj.parse();
         Document d = Parser.parse(data, "");
-        assertTrue(d.hasSameValue(document));
+        FileWriter writer=new FileWriter("src/test/extern/d1.html");
+        writer.write(document.toString());
+        writer.close();
+        FileWriter writer2=new FileWriter("src/test/extern/d2.html");
+        writer2.write(d.toString());
+        writer2.close();
         pj.worker.printThreadSummraize();
-
+        assertTrue(d.hasSameValue(document));
     }
 
     public void testParse() throws Exception {

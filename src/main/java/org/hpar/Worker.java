@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * Created by sxf on 4/30/16.
  */
 public class Worker {
-    private ExecutorService threadPool = Executors.newCachedThreadPool();
+    static private ExecutorService threadPool = Executors.newCachedThreadPool();
     private String data;
     private Job mainJob;
     public Worker(String data) {
@@ -62,12 +62,11 @@ class Job implements Runnable {
         System.out.println("Job run："+tags.pos);
         Element element = null;
         try{
-            tags.setStatus(tag.WorkStatus.doing);
             element = PartParser.parse(data, tags.pos, tags);
         }catch(Exception e) {
             e.printStackTrace();
         }finally {
-//            System.out.println(element);
+            System.out.println("Done."+tags.pos);
             tags.setElement(element);
             tags.setStatus(tag.WorkStatus.done);
         }

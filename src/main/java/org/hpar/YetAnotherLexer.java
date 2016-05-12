@@ -124,11 +124,17 @@ public class YetAnotherLexer {
 
     private static char[] script = "ript".toCharArray();
     private static char[] style = "yle".toCharArray();
+    private static char[] div = "div".toCharArray();
 
 
     private boolean findSome() {
         boolean ans = true;
-        if (!(pos < data_end && data[pos] == 's')) ans = false;
+        if (!(pos < data_end && data[pos] == 's' )) {
+            for (char c : div) {
+                if (pos < data_end && data[pos] == c) ++pos;
+                else ans = false;
+            }
+        }
         else {
             ++pos;
             if (data[pos] == 'c') {
@@ -160,7 +166,7 @@ public class YetAnotherLexer {
             return false;
         }
         if (!ans) {
-            addTail(new tag(begin, end, tag.other_begin));
+//            addTail(new tag(begin, end, tag.other_begin));
             return false;
         }
         addTail(new tag(begin, end, tag.script_begin));

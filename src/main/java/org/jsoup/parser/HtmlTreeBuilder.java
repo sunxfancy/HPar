@@ -98,7 +98,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
             Token token = tokeniser.read();
             process(token);
             token.reset();
-            if (stack.size() == 1 || token.type == Token.TokenType.EOF)
+            if (stack.size() == 0 || token.type == Token.TokenType.EOF)
                 break;
         }
         reader.writepos();

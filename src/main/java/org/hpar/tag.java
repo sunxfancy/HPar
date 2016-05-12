@@ -15,7 +15,7 @@ public class tag {
     public tag next = null;
 
     public enum WorkStatus {
-        undo, doing, done
+        undo, doing, done, jump
     }
 
     public WorkStatus status = WorkStatus.undo;
