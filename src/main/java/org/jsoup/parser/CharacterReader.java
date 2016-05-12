@@ -26,20 +26,29 @@ final class CharacterReader {
     public void setTags(tag head) { this.tags = head; }
     public void setPos(int pos) { this.pos = pos; }
 
+    public void writepos() {
+        nowtags.end = pos;
+    }
+
+    void checkTag() {
+        if (nowtags != null && nowtags.next != null && pos >= nowtags.next.pos
+                && nowtags.next.status!=tag.WorkStatus.undo)
+        {
+            System.out.println("jump to:"+pos);
+            nowtags = nowtags.next;
+            Element e = nowtags.getElement();
+            htmlTreeBuilder.insert(e);
+            pos = nowtags.end;
+        }
+    }
+
+    // sxf changed!
     char consume() {
         char val = pos >= length ? EOF : input[pos];
         pos++;
 
         // sxf add
-        if (nowtags.next != null && pos >= nowtags.next.pos
-                && (nowtags.next.status==tag.WorkStatus.doing ||
-                    nowtags.next.status==tag.WorkStatus.done ))
-        {
-            nowtags = nowtags.next;
-            Element e = nowtags.getElement();
-            htmlTreeBuilder.insert(e);
-
-        }
+        checkTag();
 
         return val;
     }
@@ -81,6 +90,8 @@ final class CharacterReader {
 
     void advance() {
         pos++;
+        // sxf add
+        checkTag();
     }
 
     void mark() {
@@ -92,7 +103,10 @@ final class CharacterReader {
     }
 
     String consumeAsString() {
-        return new String(input, pos++, 1);
+        pos++;
+        // sxf add
+        checkTag();
+        return new String(input, pos, 1);
     }
 
     /**
@@ -138,6 +152,8 @@ final class CharacterReader {
         if (offset != -1) {
             String consumed = cacheString(pos, offset);
             pos += offset;
+            // sxf add
+            checkTag();
             return consumed;
         } else {
             return consumeToEnd();
@@ -149,6 +165,8 @@ final class CharacterReader {
         if (offset != -1) {
             String consumed = cacheString(pos, offset);
             pos += offset;
+            // sxf add
+            checkTag();
             return consumed;
         } else {
             return consumeToEnd();
@@ -426,5 +444,6 @@ final class CharacterReader {
         }
         return false;
     }
+
 
 }

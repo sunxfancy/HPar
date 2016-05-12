@@ -6,6 +6,7 @@ import org.jsoup.parser.PartParser;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  *
@@ -25,6 +26,22 @@ public class Worker {
         threadPool.execute(j);
     }
 
+    public void printThreadSummraize() {
+        ThreadPoolExecutor pool = (ThreadPoolExecutor) threadPool;
+        System.out.println("完成的任务数：" + pool.getTaskCount());
+        System.out.println("峰值线程数" + pool.getLargestPoolSize());
+
+        for (tag t = mainJob.tags; t != null; t = t.next) {
+            if (t.getStatus() != tag.WorkStatus.done) {
+                continue;
+            }
+            System.out.println("开始位置:"+ t.pos);
+            if (t.pos != 0)
+            System.out.println(t.element);
+        }
+    }
+
+
     public Document getAll() {
         return (Document) mainJob.tags.getElement();
     }
@@ -33,7 +50,7 @@ public class Worker {
 
 class Job implements Runnable {
     tag tags;
-    String data;
+    private String data;
 
     public Job(tag tags, String data) {
         this.tags = tags;
@@ -42,14 +59,17 @@ class Job implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("Job run："+tags.pos);
         Element element = null;
         try{
             tags.setStatus(tag.WorkStatus.doing);
             element = PartParser.parse(data, tags.pos, tags);
         }catch(Exception e) {
-
+            e.printStackTrace();
+        }finally {
+//            System.out.println(element);
+            tags.setElement(element);
+            tags.setStatus(tag.WorkStatus.done);
         }
-        tags.setElement(element);
-        tags.setStatus(tag.WorkStatus.done);
     }
 }

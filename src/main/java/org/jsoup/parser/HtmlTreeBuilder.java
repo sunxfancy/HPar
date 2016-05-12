@@ -24,10 +24,12 @@ public class HtmlTreeBuilder extends TreeBuilder {
         return document;
     }
 
-    public Document parsePart(String string, int pos, tag now) {
+    public Element parsePart(String string, int pos, tag now) {
         this.tags = now;
-
-        return null;
+        Document doc = Document.createShell("");
+        Element body = doc.body();
+        List<Node> nodeList = parsePartP(string, body, pos, "", ParseErrorList.noTracking());
+        return (Element) nodeList.get(0);
     }
 
     @Override
@@ -36,12 +38,77 @@ public class HtmlTreeBuilder extends TreeBuilder {
         Validate.notNull(baseUri, "BaseURI must not be null");
 
         doc = new Document(baseUri);
-        reader = new CharacterReader(input, tags.pos, tags, this);
+        if (tags != null)
+            reader = new CharacterReader(input, tags.pos, tags, this);
+        else
+            reader = new CharacterReader(input);
+
         this.errors = errors;
         tokeniser = new Tokeniser(reader, errors);
         stack = new ArrayList<Element>(32);
         this.baseUri = baseUri;
     }
+
+    private List<Node> parsePartP(String inputFragment, Element context, int pos, String baseUri, ParseErrorList errors) {
+        // context may be null
+        state = HtmlTreeBuilderState.Initial;
+        initialiseParse(inputFragment, baseUri, errors);
+        contextElement = context;
+        fragmentParsing = true;
+
+        Element root = null;
+
+        if (context != null) {
+            if (context.ownerDocument() != null) // quirks setup:
+                doc.quirksMode(context.ownerDocument().quirksMode());
+
+            // initialise the tokeniser state:
+            String contextTag = context.tagName();
+            if (StringUtil.in(contextTag, "title", "textarea"))
+                tokeniser.transition(TokeniserState.Rcdata);
+            else if (StringUtil.in(contextTag, "iframe", "noembed", "noframes", "style", "xmp"))
+                tokeniser.transition(TokeniserState.Rawtext);
+            else if (contextTag.equals("script"))
+                tokeniser.transition(TokeniserState.ScriptData);
+            else if (contextTag.equals(("noscript")))
+                tokeniser.transition(TokeniserState.Data); // if scripting enabled, rawtext
+            else if (contextTag.equals("plaintext"))
+                tokeniser.transition(TokeniserState.Data);
+            else
+                tokeniser.transition(TokeniserState.Data); // default
+
+            root = new Element(Tag.valueOf("html"), baseUri);
+            doc.appendChild(root);
+            stack.add(root);
+            resetInsertionMode();
+
+            // setup form element to nearest form on context (up ancestor chain). ensures form controls are associated
+            // with form correctly
+            Elements contextChain = context.parents();
+            contextChain.add(0, context);
+            for (Element parent: contextChain) {
+                if (parent instanceof FormElement) {
+                    formElement = (FormElement) parent;
+                    break;
+                }
+            }
+        }
+
+        while (true) {
+            Token token = tokeniser.read();
+            process(token);
+            token.reset();
+            if (stack.size() == 1 || token.type == Token.TokenType.EOF)
+                break;
+        }
+        reader.writepos();
+
+        if (context != null && root != null)
+            return root.childNodes();
+        else
+            return doc.childNodes();
+    }
+
 
     // ---------------------------------------------------
 

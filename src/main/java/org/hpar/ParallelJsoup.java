@@ -10,21 +10,27 @@ public class ParallelJsoup {
     tag tags;
     String data;
     Worker worker;
-    public static final int span = 1024;
+    public static final int span = 1024*50;
 
     public ParallelJsoup(String data) {
         this.data = data;
         worker = new Worker(data);
     }
 
+    private tag lastt;
+
     public Document parse() {
         YetAnotherLexer lexer = new YetAnotherLexer(data);
         lexer.callback = (tag t) -> {
-            worker.run(t);
+            if (t.pos - lastt.pos >= span) {
+                worker.run(t);
+                lastt = t;
+            }
         };
-        tags = lexer.tags;
         tag t = new tag(0, 0, tag.other_begin);
-        t.next = tags;
+        tags = t;
+        lexer.tail = lexer.tags = t;
+        lastt = t;
         worker.run(t);
         lexer.find();
         return worker.getAll();

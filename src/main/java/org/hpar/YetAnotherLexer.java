@@ -68,13 +68,11 @@ public class YetAnotherLexer {
         if (tail != null) tail.next = t;
         tail = t;
         if (tags == null) tags = tail;
-    }
-
-    private void findOtherBegin(tag t) {
-        addTail(t);
         if (callback != null)
             callback.find(t);
     }
+
+
 
     public tag find() {
         reset();
@@ -90,12 +88,12 @@ public class YetAnotherLexer {
                         pos++;
                         if (findScriptClose(first))
                             tag_open = false;
-                        else
-                            findOtherBegin(new tag(first, pos, tag.other_end));
+//                        else
+//                            addTail(new tag(first, pos, tag.other_end));
                     } else if (data[pos] == '!' && pos+2 < data_end
                             && data[pos+1]=='-' && data[pos+2]=='-') {
                         pos += 3;
-                        addTail(new tag(first, pos, tag.comment_begin));
+//                        addTail(new tag(first, pos, tag.comment_begin));
                         comment_open = true;
                     } else {
                         if (findScript(first))
@@ -106,7 +104,7 @@ public class YetAnotherLexer {
                     if (tag_open) { ++pos; break; }
                     if (pos+2 < data_end
                             && data[pos+1]=='-' && data[pos+2]=='>') {
-                        addTail(new tag(pos, pos+3, tag.comment_end));
+//                        addTail(new tag(pos, pos+3, tag.comment_end));
                         pos += 2;
                         comment_open = false;
                     }
@@ -158,7 +156,7 @@ public class YetAnotherLexer {
         int end = ++pos;
 
         if (data[pos-1] == '/') {
-            addTail(new tag(begin, end, tag.self_end));
+//            addTail(new tag(begin, end, tag.self_end));
             return false;
         }
         if (!ans) {
@@ -176,7 +174,7 @@ public class YetAnotherLexer {
         skipSpace();
         if (pos < data_end && data[pos] == '>') {
             int end = ++pos;
-            addTail(new tag(begin, end, tag.script_end));
+//            addTail(new tag(begin, end, tag.script_end));
             return ans;
         }
         while (pos < data_end && data[pos] != '>') ++pos;
