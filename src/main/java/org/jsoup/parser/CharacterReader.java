@@ -29,7 +29,7 @@ final class CharacterReader {
     public void setPos(int pos) { this.pos = pos; }
 
     public void writepos() {
-        System.out.println("writepos:"+pos);
+//        System.out.println("writepos:"+pos);
         tags.end = pos;
     }
 
@@ -41,7 +41,7 @@ final class CharacterReader {
                     nowtags.getStatus()==tag.WorkStatus.done ) {
                 Element e = nowtags.getElement();
                 htmlTreeBuilder.insertNode(e);
-                System.out.println("jump from "+pos+" to "+nowtags.end);
+//                System.out.println("jump from "+pos+" to "+nowtags.end);
                 pos = nowtags.end;
             } else {
                 nowtags.setStatus(tag.WorkStatus.jump);
@@ -60,14 +60,20 @@ final class CharacterReader {
         return val;
     }
 
-    CharacterReader(String input, int pos, tag now_tag, HtmlTreeBuilder htb) {
+    CharacterReader(char[] input, int pos, tag now_tag, HtmlTreeBuilder htb) {
         Validate.notNull(input);
-        this.input = input.toCharArray();
+        this.input = input;
         this.length = this.input.length;
         this.pos = pos;
         this.tags = now_tag;
         this.nowtags = now_tag;
         this.htmlTreeBuilder = htb;
+    }
+
+    CharacterReader(char[] input) {
+        Validate.notNull(input);
+        this.input = input;
+        this.length = this.input.length;
     }
 
     CharacterReader(String input) {

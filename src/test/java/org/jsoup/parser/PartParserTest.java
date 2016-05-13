@@ -11,7 +11,7 @@ import org.jsoup.nodes.Element;
 public class PartParserTest extends TestCase {
     public void testParse() throws Exception {
         String data = App.readFile("src/test/extern/index.html");
-        Element d = PartParser.parse(data, 0, new tag(0, 0, 5));
+        Element d = PartParser.parse(data.toCharArray(), 0, new tag(0, 0, 5));
         assertNotNull(d);
     }
 

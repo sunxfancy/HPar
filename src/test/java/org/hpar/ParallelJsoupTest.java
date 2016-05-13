@@ -28,32 +28,34 @@ public class ParallelJsoupTest extends TestCase {
     }
 
     public void testParse() throws Exception {
-        String data = App.readFile("src/test/extern/index.html");
+        String data = App.readFile("src/test/extern/LangRef.html");
 
         ParallelJsoup pj = new ParallelJsoup(data);
         Document document = pj.parse();
         Document d = Parser.parse(data, "");
+        double time=0, time_n = 0;
+        pj = new ParallelJsoup(data);
 
-
-        long b = System.nanoTime();
-        for (int i = 0; i < 10; i++) {
+        long b, e;
+        for (int i = 0; i < 1000; i++) {
             pj = new ParallelJsoup(data);
+            b = System.nanoTime();
             document = pj.parse();
+            e = System.nanoTime();
+            time += e-b;
+            b = System.nanoTime();
+            d = Parser.parse(data, "");
+            e = System.nanoTime();
+            time_n += e-b;
         }
-        long e = System.nanoTime();
 
         assertNotNull(document);
-        double time = e - b;
 
-        b = System.nanoTime();
-        for (int i = 0; i < 10; i++) {
-            d = Parser.parse(data, "");
-        }
-        e = System.nanoTime();
-        double time_n = e - b;
+//        pj.worker.printThreadSummraize();
 
-        assertTrue(d.hasSameValue(document));
         System.out.println("TimeCost: "+time/time_n);
+        pj.worker.printThreadSummraize();
+        assertTrue(d.hasSameValue(document));
     }
 
 }

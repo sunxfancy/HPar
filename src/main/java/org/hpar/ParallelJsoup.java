@@ -14,7 +14,7 @@ public class ParallelJsoup {
 
     public ParallelJsoup(String data) {
         this.data = data;
-        worker = new Worker(data);
+        worker = new Worker(data.toCharArray());
     }
 
     private tag lastt;
@@ -23,7 +23,6 @@ public class ParallelJsoup {
         YetAnotherLexer lexer = new YetAnotherLexer(data);
         lexer.callback = (tag t) -> {
             if (t.pos - lastt.pos >= span && t.getStatus() == tag.WorkStatus.undo) {
-                t.setStatus(tag.WorkStatus.doing);
                 worker.run(t);
                 lastt = t;
             }
@@ -32,7 +31,6 @@ public class ParallelJsoup {
         tags = t;
         lexer.tail = lexer.tags = t;
         lastt = t;
-        t.setStatus(tag.WorkStatus.doing);
         worker.run(t);
         lexer.find();
         return worker.getAll();

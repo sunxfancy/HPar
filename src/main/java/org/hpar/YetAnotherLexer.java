@@ -88,12 +88,9 @@ public class YetAnotherLexer {
                         pos++;
                         if (findScriptClose(first))
                             tag_open = false;
-//                        else
-//                            addTail(new tag(first, pos, tag.other_end));
                     } else if (data[pos] == '!' && pos+2 < data_end
                             && data[pos+1]=='-' && data[pos+2]=='-') {
                         pos += 3;
-//                        addTail(new tag(first, pos, tag.comment_begin));
                         comment_open = true;
                     } else {
                         if (findScript(first))
@@ -104,7 +101,6 @@ public class YetAnotherLexer {
                     if (tag_open) { ++pos; break; }
                     if (pos+2 < data_end
                             && data[pos+1]=='-' && data[pos+2]=='>') {
-//                        addTail(new tag(pos, pos+3, tag.comment_end));
                         pos += 2;
                         comment_open = false;
                     }

@@ -13,10 +13,10 @@ import java.util.concurrent.ThreadPoolExecutor;
  * Created by sxf on 4/30/16.
  */
 public class Worker {
-    static private ExecutorService threadPool = Executors.newCachedThreadPool();
-    private String data;
+    static private ExecutorService threadPool = Executors.newFixedThreadPool(8);
+    private char[] data;
     private Job mainJob;
-    public Worker(String data) {
+    public Worker(char[] data) {
         this.data = data;
     }
 
@@ -36,8 +36,8 @@ public class Worker {
                 continue;
             }
             System.out.println("开始位置:"+ t.pos);
-            if (t.pos != 0)
-            System.out.println(t.element);
+//            if (t.pos != 0)
+//            System.out.println(t.element);
         }
     }
 
@@ -50,25 +50,34 @@ public class Worker {
 
 class Job implements Runnable {
     tag tags;
-    private String data;
+    private char[] data;
 
-    public Job(tag tags, String data) {
+    public Job(tag tags, char[] data) {
         this.tags = tags;
         this.data = data;
     }
 
     @Override
     public void run() {
-        System.out.println("Job run："+tags.pos);
-        Element element = null;
-        try{
-            element = PartParser.parse(data, tags.pos, tags);
-        }catch(Exception e) {
-            e.printStackTrace();
-        }finally {
-            System.out.println("Done."+tags.pos);
-            tags.setElement(element);
-            tags.setStatus(tag.WorkStatus.done);
-        }
+        do {
+            if (tags.getStatus() == tag.WorkStatus.undo){
+                tags.setStatus(tag.WorkStatus.doing);
+
+//                System.out.println("Job run：" + tags.pos);
+                Element element = null;
+                try {
+                    element = PartParser.parse(data, tags.pos, tags);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+//                    System.out.println("Done." + tags.pos);
+                    tags.setElement(element);
+                    tags.setStatus(tag.WorkStatus.done);
+                }
+            }
+            if (tags.pos == 0) break;
+            tags = tags.next;
+        } while (tags !=null && tags.getStatus() != tag.WorkStatus.done
+                && tags.getStatus() != tag.WorkStatus.doing);
     }
 }

@@ -17,22 +17,21 @@ public class HtmlTreeBuilder extends TreeBuilder {
     // sxf added
     private tag tags;
 
-    public Document parseFull(String string, tag now) {
+    public Document parseFull(char[] string, tag now) {
         this.tags = now;
         state = HtmlTreeBuilderState.Initial;
-        Document document = super.parse(string, "", ParseErrorList.noTracking());
+        Document document = parse(string, "", ParseErrorList.noTracking());
         return document;
     }
 
-    public Element parsePart(String string, int pos, tag now) {
+    public Element parsePart(char[] string, int pos, tag now) {
         this.tags = now;
         Document doc = Document.createShell("");
         Element body = doc.body();
         return (Element) parsePartP(string, body, pos, "", ParseErrorList.noTracking());
     }
 
-    @Override
-    protected void initialiseParse(String input, String baseUri, ParseErrorList errors) {
+    protected void initialiseParse(char[] input, String baseUri, ParseErrorList errors) {
         Validate.notNull(input, "String input must not be null");
         Validate.notNull(baseUri, "BaseURI must not be null");
 
@@ -48,7 +47,13 @@ public class HtmlTreeBuilder extends TreeBuilder {
         this.baseUri = baseUri;
     }
 
-    private Node parsePartP(String inputFragment, Element context, int pos, String baseUri, ParseErrorList errors) {
+    Document parse(char[] input, String baseUri, ParseErrorList errors) {
+        initialiseParse(input, baseUri, errors);
+        runParser();
+        return doc;
+    }
+
+    private Node parsePartP(char[] inputFragment, Element context, int pos, String baseUri, ParseErrorList errors) {
         // context may be null
         state = HtmlTreeBuilderState.Initial;
         initialiseParse(inputFragment, baseUri, errors);
