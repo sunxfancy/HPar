@@ -28,8 +28,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
         this.tags = now;
         Document doc = Document.createShell("");
         Element body = doc.body();
-        List<Node> nodeList = parsePartP(string, body, pos, "", ParseErrorList.noTracking());
-        return (Element) nodeList.get(0);
+        return (Element) parsePartP(string, body, pos, "", ParseErrorList.noTracking());
     }
 
     @Override
@@ -49,37 +48,26 @@ public class HtmlTreeBuilder extends TreeBuilder {
         this.baseUri = baseUri;
     }
 
-    private List<Node> parsePartP(String inputFragment, Element context, int pos, String baseUri, ParseErrorList errors) {
+    private Node parsePartP(String inputFragment, Element context, int pos, String baseUri, ParseErrorList errors) {
         // context may be null
         state = HtmlTreeBuilderState.Initial;
         initialiseParse(inputFragment, baseUri, errors);
         contextElement = context;
         fragmentParsing = true;
 
-        Element root = null;
+        Element root = null, body = null;
 
         if (context != null) {
             if (context.ownerDocument() != null) // quirks setup:
                 doc.quirksMode(context.ownerDocument().quirksMode());
 
             // initialise the tokeniser state:
-            String contextTag = context.tagName();
-            if (StringUtil.in(contextTag, "title", "textarea"))
-                tokeniser.transition(TokeniserState.Rcdata);
-            else if (StringUtil.in(contextTag, "iframe", "noembed", "noframes", "style", "xmp"))
-                tokeniser.transition(TokeniserState.Rawtext);
-            else if (contextTag.equals("script"))
-                tokeniser.transition(TokeniserState.ScriptData);
-            else if (contextTag.equals(("noscript")))
-                tokeniser.transition(TokeniserState.Data); // if scripting enabled, rawtext
-            else if (contextTag.equals("plaintext"))
-                tokeniser.transition(TokeniserState.Data);
-            else
-                tokeniser.transition(TokeniserState.Data); // default
+            tokeniser.transition(TokeniserState.Data); // default
 
             root = new Element(Tag.valueOf("html"), baseUri);
-            doc.appendChild(root);
-            stack.add(root);
+            body = new Element(Tag.valueOf("body"), baseUri);
+            doc.appendChild(root); root.appendChild(body);
+            stack.add(root); stack.add(body);
             resetInsertionMode();
 
             // setup form element to nearest form on context (up ancestor chain). ensures form controls are associated
@@ -98,15 +86,12 @@ public class HtmlTreeBuilder extends TreeBuilder {
             Token token = tokeniser.read();
             process(token);
             token.reset();
-            if (stack.size() == 0 || token.type == Token.TokenType.EOF)
+            if (stack.size() <= 2 || token.type == Token.TokenType.EOF)
                 break;
         }
         reader.writepos();
 
-        if (context != null && root != null)
-            return root.childNodes();
-        else
-            return doc.childNodes();
+        return body.child(0);
     }
 
 
@@ -338,7 +323,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
         currentElement().appendChild(node); // doesn't use insertNode, because we don't foster these; and will always have a stack.
     }
 
-    private void insertNode(Node node) {
+    void insertNode(Node node) {
         // if the stack hasn't been set up yet, elements (doctype, comments) go into the doc
         if (stack.size() == 0)
             doc.appendChild(node);

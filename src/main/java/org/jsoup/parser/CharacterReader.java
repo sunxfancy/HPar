@@ -40,7 +40,7 @@ final class CharacterReader {
             if (nowtags.getStatus()==tag.WorkStatus.doing ||
                     nowtags.getStatus()==tag.WorkStatus.done ) {
                 Element e = nowtags.getElement();
-                htmlTreeBuilder.insert(e);
+                htmlTreeBuilder.insertNode(e);
                 System.out.println("jump from "+pos+" to "+nowtags.end);
                 pos = nowtags.end;
             } else {
