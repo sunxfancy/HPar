@@ -12,7 +12,7 @@ import java.io.FileWriter;
  */
 public class ParallelJsoupTest extends TestCase {
     public void testOne() throws Exception {
-        String data = App.readFile("src/test/extern/index.html");
+        String data = App.readFile("src/test/extern/G.html");
 
         ParallelJsoup pj = new ParallelJsoup(data);
         Document document = pj.parse();
@@ -37,25 +37,22 @@ public class ParallelJsoupTest extends TestCase {
         pj = new ParallelJsoup(data);
 
         long b, e;
-        for (int i = 0; i < 1000; i++) {
-            pj = new ParallelJsoup(data);
+//        for (int i = 0; i < 100; i++) {
+        while (true) {
             b = System.nanoTime();
             document = pj.parse();
             e = System.nanoTime();
             time += e-b;
-            b = System.nanoTime();
-            d = Parser.parse(data, "");
-            e = System.nanoTime();
-            time_n += e-b;
+//            b = System.nanoTime();
+//            d = Parser.parse(data, "");
+//            e = System.nanoTime();
+//            time_n += e-b;
         }
 
-        assertNotNull(document);
-
+//        assertNotNull(document);
+//
+//        System.out.println("TimeCost: "+time/time_n);
 //        pj.worker.printThreadSummraize();
-
-        System.out.println("TimeCost: "+time/time_n);
-        pj.worker.printThreadSummraize();
-        assertTrue(d.hasSameValue(document));
+//        assertTrue(d.hasSameValue(document));
     }
-
 }

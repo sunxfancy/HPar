@@ -2,11 +2,8 @@ package org.jsoup.parser;
 
 import org.hpar.tag;
 import org.jsoup.helper.Validate;
-import org.jsoup.nodes.Element;
 
 import java.util.*;
-
-import static org.hpar.tag.WorkStatus.done;
 
 /**
  CharacterReader consumes tokens off a string. To replace the old TokenQueue.
@@ -21,53 +18,20 @@ final class CharacterReader {
     private int mark = 0;
     private final String[] stringCache = new String[512]; // holds reused strings in this doc, to lessen garbage
 
-    /// sxf added
-    private tag tags;
-    private tag nowtags;
-    private HtmlTreeBuilder htmlTreeBuilder;
-    public void setTags(tag head) { this.tags = head; }
     public void setPos(int pos) { this.pos = pos; }
 
-    public void writepos() {
-//        System.out.println("writepos:"+pos);
-        tags.end = pos;
-    }
-
-    void checkTag() {
-        while (nowtags != null && nowtags.next != null && pos >= nowtags.next.pos)
-        {
-            nowtags = nowtags.next;
-            if (nowtags.getStatus()==tag.WorkStatus.doing ||
-                    nowtags.getStatus()==tag.WorkStatus.done ) {
-                Element e = nowtags.getElement();
-                htmlTreeBuilder.insertNode(e);
-//                System.out.println("jump from "+pos+" to "+nowtags.end);
-                pos = nowtags.end;
-            } else {
-                nowtags.setStatus(tag.WorkStatus.jump);
-            }
-        }
-    }
-
-    // sxf changed!
     char consume() {
         char val = pos >= length ? EOF : input[pos];
         pos++;
-
-        // sxf add
-        checkTag();
-
         return val;
     }
 
+    // sxf changed!
     CharacterReader(char[] input, int pos, tag now_tag, HtmlTreeBuilder htb) {
         Validate.notNull(input);
         this.input = input;
         this.length = this.input.length;
         this.pos = pos;
-        this.tags = now_tag;
-        this.nowtags = now_tag;
-        this.htmlTreeBuilder = htb;
     }
 
     CharacterReader(char[] input) {
@@ -92,8 +56,6 @@ final class CharacterReader {
     }
 
     char current() {
-        // sxf add
-        checkTag();
         return pos >= length ? EOF : input[pos];
     }
 
@@ -105,8 +67,6 @@ final class CharacterReader {
 
     void advance() {
         pos++;
-        // sxf add
-        checkTag();
     }
 
     void mark() {
@@ -119,8 +79,6 @@ final class CharacterReader {
 
     String consumeAsString() {
         pos++;
-        // sxf add
-        checkTag();
         return new String(input, pos, 1);
     }
 
@@ -167,8 +125,6 @@ final class CharacterReader {
         if (offset != -1) {
             String consumed = cacheString(pos, offset);
             pos += offset;
-            // sxf add
-            checkTag();
             return consumed;
         } else {
             return consumeToEnd();
@@ -180,8 +136,6 @@ final class CharacterReader {
         if (offset != -1) {
             String consumed = cacheString(pos, offset);
             pos += offset;
-            // sxf add
-            checkTag();
             return consumed;
         } else {
             return consumeToEnd();

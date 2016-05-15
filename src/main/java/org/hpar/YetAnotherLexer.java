@@ -140,7 +140,7 @@ public class YetAnotherLexer {
                     else ans = false;
                 }
             } else if (data[pos] == 't') {
-            ++pos;
+                ++pos;
                 for (char c : style) {
                     if (pos < data_end && data[pos] == c) ++pos;
                     else ans = false;

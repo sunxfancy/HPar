@@ -16,9 +16,11 @@ public class HtmlTreeBuilder extends TreeBuilder {
 
     // sxf added
     private tag tags;
+    private tag nowtags;
 
     public Document parseFull(char[] string, tag now) {
         this.tags = now;
+        this.nowtags = now;
         state = HtmlTreeBuilderState.Initial;
         Document document = parse(string, "", ParseErrorList.noTracking());
         return document;
@@ -26,9 +28,10 @@ public class HtmlTreeBuilder extends TreeBuilder {
 
     public Element parsePart(char[] string, int pos, tag now) {
         this.tags = now;
+        this.nowtags = now;
         Document doc = Document.createShell("");
         Element body = doc.body();
-        return (Element) parsePartP(string, body, pos, "", ParseErrorList.noTracking());
+        return (Element) parsePartP(string, body, "", ParseErrorList.noTracking());
     }
 
     protected void initialiseParse(char[] input, String baseUri, ParseErrorList errors) {
@@ -47,13 +50,50 @@ public class HtmlTreeBuilder extends TreeBuilder {
         this.baseUri = baseUri;
     }
 
+    void runParserP(Token token) {
+        if (token.type != Token.TokenType.StartTag || !checkTag()){
+            process(token);
+            token.reset();
+        } else {
+            token = tokeniser.read();
+            System.out.println("Token:"+token);
+            process(token);
+            token.reset();
+        }
+    }
+
     Document parse(char[] input, String baseUri, ParseErrorList errors) {
         initialiseParse(input, baseUri, errors);
-        runParser();
+        while (true) {
+            Token token = tokeniser.read();
+            runParserP(token);
+            if (token.type == Token.TokenType.EOF)
+                break;
+        }
         return doc;
     }
 
-    private Node parsePartP(char[] inputFragment, Element context, int pos, String baseUri, ParseErrorList errors) {
+
+    boolean checkTag() {
+        while (nowtags != null && nowtags.next != null
+                && reader.pos() >= nowtags.next.pos)
+        {
+            nowtags = nowtags.next;
+            if (nowtags.getStatus()==tag.WorkStatus.doing ||
+                    nowtags.getStatus()==tag.WorkStatus.done ) {
+                Element e = nowtags.getElement();
+                insertNode(e);
+                System.out.println("jump from "+reader.pos()+" to "+nowtags.end);
+                reader.setPos(nowtags.end);
+                return true;
+            } else {
+                nowtags.setStatus(tag.WorkStatus.jump);
+            }
+        }
+        return false;
+    }
+
+    private Node parsePartP(char[] inputFragment, Element context, String baseUri, ParseErrorList errors) {
         // context may be null
         state = HtmlTreeBuilderState.Initial;
         initialiseParse(inputFragment, baseUri, errors);
@@ -89,12 +129,11 @@ public class HtmlTreeBuilder extends TreeBuilder {
 
         while (true) {
             Token token = tokeniser.read();
-            process(token);
-            token.reset();
+            runParserP(token);
             if (stack.size() <= 2 || token.type == Token.TokenType.EOF)
                 break;
         }
-        reader.writepos();
+        tags.end = reader.pos();
 
         return body.child(0);
     }
@@ -269,7 +308,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
             tokeniser.emit(emptyEnd.reset().name(el.tagName()));  // ensure we get out of whatever state we are in. emitted for yielded processing
             return el;
         }
-        
+
         Element el = new Element(Tag.valueOf(startTag.name()), baseUri, startTag.attributes);
         insert(el);
         return el;

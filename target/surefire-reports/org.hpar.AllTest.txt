@@ -1,13 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.hpar.AllTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.295 sec <<< FAILURE!
-testAll(org.hpar.AllTest)  Time elapsed: 0.287 sec  <<< FAILURE!
-junit.framework.AssertionFailedError
-	at junit.framework.Assert.fail(Assert.java:47)
-	at junit.framework.Assert.assertTrue(Assert.java:20)
-	at junit.framework.Assert.assertNotNull(Assert.java:220)
-	at junit.framework.Assert.assertNotNull(Assert.java:213)
-	at org.hpar.AllTest.loadOneFile(AllTest.java:57)
-	at org.hpar.AllTest.loadAllFiles(AllTest.java:34)
-	at org.hpar.AllTest.testAll(AllTest.java:21)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.035 sec - in org.hpar.AllTest

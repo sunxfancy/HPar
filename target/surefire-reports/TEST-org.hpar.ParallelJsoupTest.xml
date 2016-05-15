@@ -1,17 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="1" name="org.hpar.ParallelJsoupTest" time="0.025" errors="0" skipped="0">
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.hpar.ParallelJsoupTest" time="36.526" tests="2" errors="0" skipped="0" failures="1">
   <properties>
-    <property name="idea.version" value="2016.1.1"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/home/sxf/opt/jdk1.8.0_45/jre/lib/amd64"/>
     <property name="java.vm.version" value="25.45-b02"/>
     <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="maven.multiModuleProjectDirectory" value="/mnt/data/workspace/Java/HPar/HPar"/>
     <property name="java.vendor.url" value="http://java.oracle.com/"/>
     <property name="path.separator" value=":"/>
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
     <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
     <property name="file.encoding.pkg" value="sun.io"/>
-    <property name="idea.launcher.port" value="7534"/>
     <property name="user.country" value="US"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value="unknown"/>
@@ -22,13 +21,12 @@
     <property name="java.endorsed.dirs" value="/home/sxf/opt/jdk1.8.0_45/jre/lib/endorsed"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.io.tmpdir" value="/tmp"/>
-    <property name="line.separator" value="
-"/>
+    <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="os.name" value="Linux"/>
-    <property name="classworlds.conf" value="/home/sxf/opt/idea-IU-145.597.3/plugins/maven/lib/maven3/bin/m2.conf"/>
+    <property name="classworlds.conf" value="/usr/share/maven/bin/m2.conf"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
-    <property name="java.library.path" value="/home/sxf/opt/idea-IU-145.597.3/bin:/home/sxf/torch/install/lib:/usr/local/cuda/lib64::/home/sxf/data/Program/Qt5.3.2/5.3/gcc_64/lib:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib"/>
+    <property name="java.library.path" value="/home/sxf/torch/install/lib:/usr/local/cuda/lib64::/home/sxf/data/Program/Qt5.3.2/5.3/gcc_64/lib:/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="52.0"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
@@ -36,15 +34,14 @@
     <property name="user.home" value="/home/sxf"/>
     <property name="user.timezone" value="Asia/Shanghai"/>
     <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
-    <property name="java.specification.version" value="1.8"/>
-    <property name="idea.launcher.bin.path" value="/home/sxf/opt/idea-IU-145.597.3/bin"/>
     <property name="file.encoding" value="UTF-8"/>
+    <property name="java.specification.version" value="1.8"/>
     <property name="user.name" value="sxf"/>
-    <property name="java.class.path" value="/home/sxf/opt/idea-IU-145.597.3/plugins/maven/lib/maven3/boot/plexus-classworlds-2.4.jar:/home/sxf/opt/idea-IU-145.597.3/lib/idea_rt.jar"/>
+    <property name="java.class.path" value="/usr/share/maven/boot/plexus-classworlds-2.x.jar"/>
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="/home/sxf/opt/jdk1.8.0_45/jre"/>
-    <property name="sun.java.command" value="com.intellij.rt.execution.application.AppMain org.codehaus.classworlds.Launcher -Didea.version=2016.1.1 test"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher test"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="user.language" value="en"/>
     <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
@@ -54,7 +51,7 @@
     <property name="securerandom.source" value="file:/dev/./urandom"/>
     <property name="sun.boot.class.path" value="/home/sxf/opt/jdk1.8.0_45/jre/lib/resources.jar:/home/sxf/opt/jdk1.8.0_45/jre/lib/rt.jar:/home/sxf/opt/jdk1.8.0_45/jre/lib/sunrsasign.jar:/home/sxf/opt/jdk1.8.0_45/jre/lib/jsse.jar:/home/sxf/opt/jdk1.8.0_45/jre/lib/jce.jar:/home/sxf/opt/jdk1.8.0_45/jre/lib/charsets.jar:/home/sxf/opt/jdk1.8.0_45/jre/lib/jfr.jar:/home/sxf/opt/jdk1.8.0_45/jre/classes"/>
     <property name="java.vendor" value="Oracle Corporation"/>
-    <property name="maven.home" value="/home/sxf/opt/idea-IU-145.597.3/plugins/maven/lib/maven3"/>
+    <property name="maven.home" value="/usr/share/maven"/>
     <property name="file.separator" value="/"/>
     <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -62,13 +59,176 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="org.hpar.ParallelJsoupTest" name="testParse" time="0.025">
+  <testcase name="testOne" classname="org.hpar.ParallelJsoupTest" time="0.153"/>
+  <testcase name="testParse" classname="org.hpar.ParallelJsoupTest" time="36.373">
     <failure type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError
 	at junit.framework.Assert.fail(Assert.java:47)
 	at junit.framework.Assert.assertTrue(Assert.java:20)
-	at junit.framework.Assert.assertNotNull(Assert.java:220)
-	at junit.framework.Assert.assertNotNull(Assert.java:213)
-	at org.hpar.ParallelJsoupTest.testParse(ParallelJsoupTest.java:15)
+	at junit.framework.Assert.assertTrue(Assert.java:27)
+	at org.hpar.ParallelJsoupTest.testParse(ParallelJsoupTest.java:58)
 </failure>
+    <system-out><![CDATA[TimeCost: 0.4046155412547835
+完成的任务数：22123
+峰值线程数8
+开始位置:0
+开始位置:100232
+开始位置:100629
+开始位置:102502
+开始位置:108446
+开始位置:151827
+开始位置:154280
+开始位置:158858
+开始位置:159985
+开始位置:173265
+开始位置:174499
+开始位置:177475
+开始位置:179715
+开始位置:180115
+开始位置:182381
+开始位置:202893
+开始位置:203593
+开始位置:206704
+开始位置:212330
+开始位置:214186
+开始位置:215536
+开始位置:225863
+开始位置:227317
+开始位置:230479
+开始位置:232329
+开始位置:236951
+开始位置:243382
+开始位置:245470
+开始位置:251005
+开始位置:257262
+开始位置:283062
+开始位置:314755
+开始位置:316388
+开始位置:327222
+开始位置:372615
+开始位置:424094
+开始位置:424385
+开始位置:425165
+开始位置:427879
+开始位置:430164
+开始位置:437249
+开始位置:439272
+开始位置:444001
+开始位置:444759
+开始位置:447471
+开始位置:448915
+开始位置:450198
+开始位置:451442
+开始位置:452702
+开始位置:453576
+开始位置:454602
+开始位置:455383
+开始位置:456212
+开始位置:457126
+开始位置:457916
+开始位置:458344
+开始位置:466051
+开始位置:466514
+开始位置:472704
+开始位置:477062
+开始位置:480271
+开始位置:480711
+开始位置:484854
+开始位置:487089
+开始位置:489041
+开始位置:497527
+开始位置:528521
+开始位置:528962
+开始位置:529276
+开始位置:529735
+开始位置:530206
+开始位置:530643
+开始位置:535804
+开始位置:539209
+开始位置:543240
+开始位置:544641
+开始位置:590648
+开始位置:616840
+开始位置:628535
+开始位置:631557
+开始位置:631812
+开始位置:632131
+开始位置:637091
+开始位置:684360
+开始位置:684933
+开始位置:690260
+开始位置:697367
+开始位置:700282
+开始位置:708588
+开始位置:735804
+开始位置:736377
+开始位置:737362
+开始位置:741049
+开始位置:744729
+开始位置:749461
+开始位置:754058
+开始位置:758193
+开始位置:762900
+开始位置:787333
+开始位置:788364
+开始位置:791949
+开始位置:805580
+开始位置:809222
+开始位置:817512
+开始位置:822713
+开始位置:827939
+开始位置:838759
+开始位置:839331
+开始位置:839889
+开始位置:840169
+开始位置:841038
+开始位置:843646
+开始位置:853394
+开始位置:890042
+开始位置:890665
+开始位置:941364
+开始位置:944486
+开始位置:944796
+开始位置:945037
+开始位置:945368
+开始位置:948640
+开始位置:952640
+开始位置:956647
+开始位置:960547
+开始位置:963823
+开始位置:967090
+开始位置:970426
+开始位置:973798
+开始位置:977137
+开始位置:980439
+开始位置:994452
+开始位置:994788
+开始位置:995470
+开始位置:996477
+开始位置:1002370
+开始位置:1036990
+开始位置:1045789
+开始位置:1046875
+开始位置:1047610
+开始位置:1055397
+开始位置:1055917
+开始位置:1056436
+开始位置:1067383
+开始位置:1090355
+开始位置:1097163
+开始位置:1104453
+开始位置:1116043
+开始位置:1127766
+开始位置:1148855
+开始位置:1149779
+开始位置:1152677
+开始位置:1156196
+开始位置:1159431
+开始位置:1162123
+开始位置:1163905
+开始位置:1165591
+开始位置:1166121
+开始位置:1166164
+开始位置:1166756
+]]></system-out>
   </testcase>
 </testsuite>
