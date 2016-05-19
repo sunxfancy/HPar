@@ -12,37 +12,70 @@ public class tag {
     public int size;
     public int type;
     public int end;
-    public tag next = null;
+    private tag _next = null;
+
+    private final Object sync_next = new Object();
+    private final Object sync_status = new Object();
+    private final Object sync_element = new Object();
+
+    public tag getNext() {
+        synchronized (sync_next) {
+            if (_next == null && pos != -1) {
+                try {
+                    sync_next.wait();
+                } catch (InterruptedException e) {
+//                e.printStackTrace();
+                }
+            }
+        }
+        return _next;
+    }
+
+    public void setNext(tag t) {
+        if (t == null) return;
+        synchronized (sync_next) {
+            _next = t;
+            sync_next.notifyAll();
+        }
+    }
 
     public enum WorkStatus {
         undo, doing, done, jump
     }
 
     public WorkStatus status = WorkStatus.undo;
-    Element element = null;
+    private Element element = null;
 
-    public synchronized void setStatus(WorkStatus status) {
-        this.status = status;
+    public void setStatus(WorkStatus status) {
+        synchronized (sync_status) {
+            this.status = status;
+        }
     }
 
-    public synchronized WorkStatus getStatus() {
-        return this.status;
+    public WorkStatus getStatus() {
+        synchronized (sync_status) {
+            return this.status;
+        }
     }
 
-    public synchronized Element getElement() {
-        if (element == null) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-//                e.printStackTrace();
+    public Element getElement() {
+        synchronized (sync_element) {
+            if (element == null && pos != -1) {
+                try {
+                    sync_element.wait();
+                } catch (InterruptedException e) {
+    //                e.printStackTrace();
+                }
             }
         }
         return element;
     }
 
-    public synchronized void setElement(Element element) {
-        this.element = element;
-        this.notifyAll();
+    public void setElement(Element element) {
+        synchronized (sync_element) {
+            this.element = element;
+            sync_element.notifyAll();
+        }
     }
 
     public tag(int begin, int end, int type) {

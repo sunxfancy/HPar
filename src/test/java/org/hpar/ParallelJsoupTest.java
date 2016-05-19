@@ -37,22 +37,22 @@ public class ParallelJsoupTest extends TestCase {
         pj = new ParallelJsoup(data);
 
         long b, e;
-//        for (int i = 0; i < 100; i++) {
-        while (true) {
+        for (int i = 0; i < 100; i++) {
+//        while (true) {
             b = System.nanoTime();
             document = pj.parse();
             e = System.nanoTime();
             time += e-b;
-//            b = System.nanoTime();
-//            d = Parser.parse(data, "");
-//            e = System.nanoTime();
-//            time_n += e-b;
+            b = System.nanoTime();
+            d = Parser.parse(data, "");
+            e = System.nanoTime();
+            time_n += e-b;
         }
 
-//        assertNotNull(document);
-//
-//        System.out.println("TimeCost: "+time/time_n);
-//        pj.worker.printThreadSummraize();
-//        assertTrue(d.hasSameValue(document));
+        assertNotNull(document);
+
+        System.out.println("TimeCost: "+time/time_n);
+        pj.worker.printThreadSummraize();
+        assertTrue(d.hasSameValue(document));
     }
 }

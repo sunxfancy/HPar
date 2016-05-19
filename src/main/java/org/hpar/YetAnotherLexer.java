@@ -1,5 +1,7 @@
 package org.hpar;
 
+import org.jsoup.nodes.Element;
+
 /**
  *
  * Created by sxf on 4/27/16.
@@ -58,20 +60,19 @@ public class YetAnotherLexer {
     }
 
     public void print() {
-        for (tag t = tags; t!=null; t=t.next) {
+        for (tag t = tags; t.pos != -1; t=t.getNext()) {
             System.out.println("Match: "+String.copyValueOf(data, t.pos, t.size));
             System.out.println("from: "+t.pos+" - "+(t.pos+t.size));
         }
     }
 
     private void addTail(tag t) {
-        if (tail != null) tail.next = t;
+        if (tail != null) tail.setNext(t);
         tail = t;
         if (tags == null) tags = tail;
-        if (callback != null)
+        if (callback != null && t.pos != -1)
             callback.find(t);
     }
-
 
 
     public tag find() {
@@ -115,6 +116,9 @@ public class YetAnotherLexer {
                     ++pos;
             }
         }
+        tag end = new tag(-1, -1, tag.other_end);
+        end.setStatus(tag.WorkStatus.done);
+        tail.setNext(end);
         return tags;
     }
 

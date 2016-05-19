@@ -16,7 +16,7 @@ final class CharacterReader {
     private final int length;
     private int pos = 0;
     private int mark = 0;
-    private final String[] stringCache = new String[512]; // holds reused strings in this doc, to lessen garbage
+    static String[] stringCache = new String[512]; // holds reused strings in this doc, to lessen garbage
 
     public void setPos(int pos) { this.pos = pos; }
 

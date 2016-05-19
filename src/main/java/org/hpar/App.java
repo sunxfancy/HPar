@@ -14,13 +14,14 @@ public class App
     public static void main(String[] args) {
         String data = "";
         try {
-            data = readFile(args[1]);
+            data = readFile(args[0]);
         } catch(IOException e) {
             e.printStackTrace();
         }
 
         ParallelJsoup pp = new ParallelJsoup(data);
         Document dd = pp.parse();
+	    System.out.println(dd);
     }
 
     public static String readFile(String fileName) throws IOException {
