@@ -21,6 +21,7 @@ public class App
 
         ParallelJsoup pp = new ParallelJsoup(data);
         Document dd = pp.parse();
+	    System.out.println(dd);
     }
 
     public static String readFile(String fileName) throws IOException {

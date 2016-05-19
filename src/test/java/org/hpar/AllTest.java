@@ -54,8 +54,6 @@ public class AllTest extends TestCase {
             e1.printStackTrace();
             throw e1;
         }
-        assertNotNull(d);
-        assertTrue(d.getClass() == dd.getClass());
         p++;
         if (!dd.hasSameValue(d)) {
             System.out.println("出现异常！");

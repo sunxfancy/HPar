@@ -17,10 +17,14 @@ public class HtmlTreeBuilder extends TreeBuilder {
     // sxf added
     private tag tags;
     private tag nowtags;
+    private char[] data;
+    private boolean isParallel = false;
 
     public Document parseFull(char[] string, tag now) {
         this.tags = now;
         this.nowtags = now;
+        this.data = string;
+        this.isParallel = true;
         state = HtmlTreeBuilderState.Initial;
         Document document = parse(string, "", ParseErrorList.noTracking());
         return document;
@@ -29,6 +33,8 @@ public class HtmlTreeBuilder extends TreeBuilder {
     public Element parsePart(char[] string, int pos, tag now) {
         this.tags = now;
         this.nowtags = now;
+        this.data = string;
+        this.isParallel = true;
         Document doc = Document.createShell("");
         Element body = doc.body();
         return (Element) parsePartP(string, body, "", ParseErrorList.noTracking());
@@ -50,13 +56,20 @@ public class HtmlTreeBuilder extends TreeBuilder {
         this.baseUri = baseUri;
     }
 
-    void runParserP(Token token) {
-        if (token.type != Token.TokenType.StartTag || !checkTag()){
-            process(token);
+    int lastpos = 0;
+
+    void runParserP(int pos, Token token) {
+        if (token.type == Token.TokenType.StartTag && checkTag(pos)){
+            // has jumped
             token.reset();
+//            tokeniser.advanceTransition(TokeniserState.Data);
+            return;
+//            token = tokeniser.read();
+//            System.out.println("Token:"+token.tokenType());
+//            System.out.println("Now:"+String.copyValueOf(data, reader.pos(), 30));
+//            process(token);
+//            token.reset();
         } else {
-            token = tokeniser.read();
-            System.out.println("Token:"+token);
             process(token);
             token.reset();
         }
@@ -65,25 +78,30 @@ public class HtmlTreeBuilder extends TreeBuilder {
     Document parse(char[] input, String baseUri, ParseErrorList errors) {
         initialiseParse(input, baseUri, errors);
         while (true) {
+            int pos = reader.pos();
             Token token = tokeniser.read();
-            runParserP(token);
+            if (isParallel) runParserP(pos, token);
             if (token.type == Token.TokenType.EOF)
                 break;
+            lastpos = pos;
         }
         return doc;
     }
 
 
-    boolean checkTag() {
-        while (nowtags != null && nowtags.next != null
-                && reader.pos() >= nowtags.next.pos)
+    boolean checkTag(int pos) {
+        tag next;
+        while (nowtags != null && (next = nowtags.getNext()).pos != -1 && pos >= next.pos)
         {
-            nowtags = nowtags.next;
+            nowtags = next;
             if (nowtags.getStatus()==tag.WorkStatus.doing ||
                     nowtags.getStatus()==tag.WorkStatus.done ) {
                 Element e = nowtags.getElement();
                 insertNode(e);
-                System.out.println("jump from "+reader.pos()+" to "+nowtags.end);
+
+//                System.out.println("jump from "+pos+" to "+nowtags.end);
+//                System.out.println("Tag:"+String.copyValueOf(data, nowtags.pos, 30));
+//                System.out.println("Pos:"+String.copyValueOf(data, pos, 30));
                 reader.setPos(nowtags.end);
                 return true;
             } else {
@@ -126,12 +144,13 @@ public class HtmlTreeBuilder extends TreeBuilder {
                 }
             }
         }
-
         while (true) {
+            int pos = reader.pos();
             Token token = tokeniser.read();
-            runParserP(token);
+            runParserP(pos, token);
             if (stack.size() <= 2 || token.type == Token.TokenType.EOF)
                 break;
+            lastpos = pos;
         }
         tags.end = reader.pos();
 

@@ -13,11 +13,12 @@ import java.util.concurrent.ThreadPoolExecutor;
  * Created by sxf on 4/30/16.
  */
 public class Worker {
-    static private ExecutorService threadPool = Executors.newFixedThreadPool(8);
+    private ExecutorService threadPool;
     private char[] data;
     private Job mainJob;
-    public Worker(char[] data) {
+    public Worker(char[] data, int n) {
         this.data = data;
+        this.threadPool = Executors.newFixedThreadPool(n);
     }
 
     public void run(tag t) {
@@ -31,7 +32,7 @@ public class Worker {
         System.out.println("完成的任务数：" + pool.getTaskCount());
         System.out.println("峰值线程数" + pool.getLargestPoolSize());
 
-        for (tag t = mainJob.tags; t != null; t = t.next) {
+        for (tag t = mainJob.tags; t.pos != -1; t = t.getNext()) {
             if (t.getStatus() != tag.WorkStatus.done) {
                 continue;
             }
@@ -75,8 +76,8 @@ class Job implements Runnable {
                     tags.setStatus(tag.WorkStatus.done);
                 }
             }
-            if (tags.pos == 0) break;
-            tags = tags.next;
+            if (tags.pos == 0 && tags.getNext().pos == -1) break;
+            tags = tags.getNext();
         } while (tags !=null && tags.getStatus() != tag.WorkStatus.done
                 && tags.getStatus() != tag.WorkStatus.doing);
     }
