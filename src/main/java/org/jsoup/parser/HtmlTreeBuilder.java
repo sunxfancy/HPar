@@ -105,7 +105,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
 //                System.out.println("jump from "+pos+" to "+nowtags.end+" ("+nowtags.pos+")");
                 int end = nowtags.end;
                 reader.setPos(end);
-                while ((next = nowtags.getNext()).pos != -1 && (end >= next.pos)){
+                while ((next = nowtags.getNext()).pos != -1 && (end > next.pos)){
                     nowtags = next;
                     nowtags.setStatus(tag.WorkStatus.jump);
                 }
