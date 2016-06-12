@@ -27,7 +27,7 @@ final class CharacterReader {
     }
 
     // sxf changed!
-    CharacterReader(char[] input, int pos, tag now_tag, HtmlTreeBuilder htb) {
+    CharacterReader(char[] input, int pos) {
         Validate.notNull(input);
         this.input = input;
         this.length = this.input.length;

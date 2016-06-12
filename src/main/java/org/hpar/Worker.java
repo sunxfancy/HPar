@@ -36,9 +36,9 @@ public class Worker {
             if (t.getStatus() != tag.WorkStatus.done) {
                 continue;
             }
-            System.out.println("开始位置:"+ t.pos);
-//            if (t.pos != 0)
-//            System.out.println(t.element);
+            if (t.pos != 0)
+            System.out.println(t.pos + " - " + t.end);
+//            System.out.println(String.copyValueOf(data, t.pos, t.end - t.pos));
         }
     }
 

@@ -23,17 +23,16 @@ public class HtmlTreeBuilder extends TreeBuilder {
     public Document parseFull(char[] string, tag now) {
 //        CharacterReader.stringCache = new String[512];
         this.tags = now;
-        this.nowtags = now;
+        this.nowtags = now.getNext();
         this.data = string;
         this.isParallel = true;
-        state = HtmlTreeBuilderState.Initial;
         Document document = parse(string, "", ParseErrorList.noTracking());
         return document;
     }
 
     public Element parsePart(char[] string, int pos, tag now) {
         this.tags = now;
-        this.nowtags = now;
+        this.nowtags = now.getNext();
         this.data = string;
         this.isParallel = true;
         Document doc = Document.createShell("");
@@ -47,7 +46,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
 
         doc = new Document(baseUri);
         if (tags != null)
-            reader = new CharacterReader(input, tags.pos, tags, this);
+            reader = new CharacterReader(input, tags.pos);
         else
             reader = new CharacterReader(input);
 
@@ -63,6 +62,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
         if (token.type == Token.TokenType.StartTag && checkTag(pos)){
             // has jumped
             token.reset();
+//            tokeniser.transition(TokeniserState.Data);
             tokeniser.transition(laststate);
         } else {
             process(token);
@@ -71,6 +71,8 @@ public class HtmlTreeBuilder extends TreeBuilder {
     }
 
     Document parse(char[] input, String baseUri, ParseErrorList errors) {
+        state = HtmlTreeBuilderState.Initial;
+        baseUriSetFromDoc = false;
         initialiseParse(input, baseUri, errors);
         while (true) {
             int pos = reader.pos();
@@ -87,32 +89,29 @@ public class HtmlTreeBuilder extends TreeBuilder {
 
 
     boolean checkTag(int pos) {
-        tag next;
-        while (nowtags != null && (next = nowtags.getNext()).pos != -1 && (pos >= next.pos))
+        while (nowtags != null && (nowtags.pos != -1) && (pos >= nowtags.pos))
         {
-            nowtags = next;
-
             if (nowtags.getStatus()==tag.WorkStatus.doing ||
                     nowtags.getStatus()==tag.WorkStatus.done ) {
                 Element e = nowtags.getElement();
                 insertNode(e);
-//                if (pos > next.pos) {
-//                    System.out.println("jump from "+pos+" to "+nowtags.end+" ("+nowtags.pos+")");
-//                    System.out.println(String.copyValueOf(data, nowtags.pos, nowtags.end - nowtags.pos));
-//                    System.out.println(String.copyValueOf(data, pos, nowtags.end - nowtags.pos));
-//                    System.out.println(String.copyValueOf(data, lastpos, nowtags.end - nowtags.pos));
-//                }
-//                System.out.println("jump from "+pos+" to "+nowtags.end+" ("+nowtags.pos+")");
+                if (pos > nowtags.pos) {
+                    System.out.println("jump from "+pos+" to "+nowtags.end+" ("+nowtags.pos+")");
+                    System.out.println(String.copyValueOf(data, nowtags.pos, nowtags.end - nowtags.pos));
+                    System.out.println(String.copyValueOf(data, pos, nowtags.end - nowtags.pos));
+                    System.out.println(String.copyValueOf(data, lastpos, nowtags.end - nowtags.pos));
+                }
+                System.out.println("jump from "+pos+" to "+nowtags.end+" ("+nowtags.pos+")");
                 int end = nowtags.end;
                 reader.setPos(end);
-                while ((next = nowtags.getNext()).pos != -1 && (end > next.pos)){
-                    nowtags = next;
-                    nowtags.setStatus(tag.WorkStatus.jump);
-                }
+                do {
+                    nowtags = nowtags.getNext();
+                } while ((nowtags != null) && (nowtags.pos != -1) && (end > nowtags.pos));
                 return true;
             } else {
                 nowtags.setStatus(tag.WorkStatus.jump);
             }
+            nowtags = nowtags.getNext();
         }
         return false;
     }
