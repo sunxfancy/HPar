@@ -87,7 +87,7 @@ public class YetAnotherLexer {
                     int first = pos++;
                     if (data[pos] == '/') {
                         pos++;
-                        if (findScriptClose(first))
+                        if (last_match != null && findScriptClose(first))
                             tag_open = false;
                     } else if (data[pos] == '!' && pos+2 < data_end
                             && data[pos+1]=='-' && data[pos+2]=='-') {
@@ -122,36 +122,31 @@ public class YetAnotherLexer {
         return tags;
     }
 
-    private static char[] script = "ript".toCharArray();
-    private static char[] style = "yle".toCharArray();
+    private static char[] script = "cript".toCharArray();
+    private static char[] style = "tyle".toCharArray();
     private static char[] div = "div".toCharArray();
+    private static char[] noscript = "noscript".toCharArray();
+    private static char[] textarea = "textarea".toCharArray();
 
+    private static char[] last_match = null;
+
+    private boolean findTag(char[] str) {
+        for (char c : str) {
+            if (pos < data_end && data[pos] == c) ++pos;
+            else return false;
+        }
+        if (str != div) last_match = str;
+        return true;
+    }
 
     private boolean findSome() {
-        boolean ans = true;
-        if (!(pos < data_end && data[pos] == 's' )) {
-            for (char c : div) {
-                if (pos < data_end && data[pos] == c) ++pos;
-                else ans = false;
-            }
-        }
-        else {
+        if (pos >= data_end) return false;
+        if (data[pos] == 's') {
             ++pos;
-            if (data[pos] == 'c') {
-                ++pos;
-                for (char c : script) {
-                    if (pos < data_end && data[pos] == c) ++pos;
-                    else ans = false;
-                }
-            } else if (data[pos] == 't') {
-                ++pos;
-                for (char c : style) {
-                    if (pos < data_end && data[pos] == c) ++pos;
-                    else ans = false;
-                }
-            } else ans = false;
+            return findTag(script) || findTag(style);
+        } else {
+            return findTag(div) || findTag(noscript) || findTag(textarea);
         }
-        return ans;
     }
 
     private boolean findScript(int begin) {
@@ -176,7 +171,8 @@ public class YetAnotherLexer {
 
     private boolean findScriptClose(int begin) {
         skipSpace();
-        boolean ans = findSome();
+        boolean ans = findTag(last_match);
+        last_match = null;
         skipSpace();
         if (pos < data_end && data[pos] == '>') {
             int end = ++pos;

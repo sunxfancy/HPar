@@ -12,7 +12,7 @@ import java.io.FileWriter;
  */
 public class ParallelJsoupTest extends TestCase {
     public void testOne() throws Exception {
-        String data = App.readFile("src/test/extern/Google News.html");
+        String data = App.readFile("src/test/extern/websites/12.html");
 
         ParallelJsoup pj = new ParallelJsoup(data);
         Document document = pj.parse();

@@ -1,6 +1,7 @@
 package org.hpar;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  *
@@ -10,7 +11,7 @@ public class ParallelJsoup {
     tag tags;
     String data;
     Worker worker;
-    public static final int span = 1024*10;
+    public static final int span = 0;
     public static final int threads = 8;
     public ParallelJsoup(String data) {
         this.data = data;
@@ -33,6 +34,10 @@ public class ParallelJsoup {
         lastt = t;
         worker.run(t);
         lexer.find();
-        return worker.getAll();
+        Element e = worker.getAll();
+        if (!(e instanceof Document)) {
+            System.out.println(e);
+        }
+        return (Document)e;
     }
 }

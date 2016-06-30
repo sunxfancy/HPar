@@ -43,8 +43,8 @@ public class Worker {
     }
 
 
-    public Document getAll() {
-        return (Document) mainJob.tags.getElement();
+    public Element getAll() {
+        return mainJob.tags.getElement();
     }
 }
 

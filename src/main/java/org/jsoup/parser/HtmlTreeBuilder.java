@@ -95,13 +95,10 @@ public class HtmlTreeBuilder extends TreeBuilder {
                     nowtags.getStatus()==tag.WorkStatus.done ) {
                 Element e = nowtags.getElement();
                 insertNode(e);
-                if (pos > nowtags.pos) {
-                    System.out.println("jump from "+pos+" to "+nowtags.end+" ("+nowtags.pos+")");
-                    System.out.println(String.copyValueOf(data, nowtags.pos, nowtags.end - nowtags.pos));
-                    System.out.println(String.copyValueOf(data, pos, nowtags.end - nowtags.pos));
-                    System.out.println(String.copyValueOf(data, lastpos, nowtags.end - nowtags.pos));
-                }
-                System.out.println("jump from "+pos+" to "+nowtags.end+" ("+nowtags.pos+")");
+//                System.out.println("jump from "+pos+" to "+nowtags.end+" ("+nowtags.pos+")");
+//                if (pos > nowtags.pos) {
+//                    System.out.println(String.copyValueOf(data, nowtags.pos, nowtags.size));
+//                }
                 int end = nowtags.end;
                 reader.setPos(end);
                 do {
