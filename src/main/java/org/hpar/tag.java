@@ -1,6 +1,5 @@
 package org.hpar;
 
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 /**
@@ -15,7 +14,7 @@ public class tag {
     private tag _next = null;
 
     private final Object sync_next = new Object();
-    private final Object sync_status = new Object();
+    public final Object sync_status = new Object();
     private final Object sync_element = new Object();
 
     public tag getNext() {
@@ -34,7 +33,7 @@ public class tag {
     public void setNext(tag t) {
         if (t == null) return;
         synchronized (sync_next) {
-            _next = t;
+            this._next = t;
             sync_next.notifyAll();
         }
     }
@@ -53,9 +52,7 @@ public class tag {
     }
 
     public WorkStatus getStatus() {
-        synchronized (sync_status) {
-            return this.status;
-        }
+        return this.status;
     }
 
     public Element getElement() {

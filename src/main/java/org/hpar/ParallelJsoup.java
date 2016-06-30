@@ -11,7 +11,7 @@ public class ParallelJsoup {
     tag tags;
     String data;
     Worker worker;
-    public static final int span = 0;
+    public static final int span = 1024*10;
     public static final int threads = 8;
     public ParallelJsoup(String data) {
         this.data = data;

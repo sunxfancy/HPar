@@ -18,15 +18,14 @@ public class HtmlTreeBuilder extends TreeBuilder {
     private tag tags;
     private tag nowtags;
     private char[] data;
-    private boolean isParallel = false;
 
     public Document parseFull(char[] string, tag now) {
 //        CharacterReader.stringCache = new String[512];
         this.tags = now;
         this.nowtags = now.getNext();
         this.data = string;
-        this.isParallel = true;
         Document document = parse(string, "", ParseErrorList.noTracking());
+        assert(document != null);
         return document;
     }
 
@@ -34,7 +33,6 @@ public class HtmlTreeBuilder extends TreeBuilder {
         this.tags = now;
         this.nowtags = now.getNext();
         this.data = string;
-        this.isParallel = true;
         Document doc = Document.createShell("");
         Element body = doc.body();
         return (Element) parsePartP(string, body, "", ParseErrorList.noTracking());
@@ -79,7 +77,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
             TokeniserState laststate = tokeniser.getState();
             Token token = tokeniser.read();
 //            System.out.println(token);
-            if (isParallel) runParserP(pos, token, laststate);
+            runParserP(pos, token, laststate);
             if (token.type == Token.TokenType.EOF)
                 break;
             lastpos = pos;
@@ -91,22 +89,24 @@ public class HtmlTreeBuilder extends TreeBuilder {
     boolean checkTag(int pos) {
         while (nowtags != null && (nowtags.pos != -1) && (pos >= nowtags.pos))
         {
-            if (nowtags.getStatus()==tag.WorkStatus.doing ||
-                    nowtags.getStatus()==tag.WorkStatus.done ) {
-                Element e = nowtags.getElement();
-                insertNode(e);
+            synchronized (nowtags.sync_status) {
+                if (nowtags.getStatus() == tag.WorkStatus.doing ||
+                        nowtags.getStatus() == tag.WorkStatus.done) {
+                    Element e = nowtags.getElement();
+                    insertNode(e);
 //                System.out.println("jump from "+pos+" to "+nowtags.end+" ("+nowtags.pos+")");
 //                if (pos > nowtags.pos) {
 //                    System.out.println(String.copyValueOf(data, nowtags.pos, nowtags.size));
 //                }
-                int end = nowtags.end;
-                reader.setPos(end);
-                do {
-                    nowtags = nowtags.getNext();
-                } while ((nowtags != null) && (nowtags.pos != -1) && (end > nowtags.pos));
-                return true;
-            } else {
-                nowtags.setStatus(tag.WorkStatus.jump);
+                    int end = nowtags.end;
+                    reader.setPos(end);
+                    do {
+                        nowtags = nowtags.getNext();
+                    } while ((nowtags != null) && (nowtags.pos != -1) && (end > nowtags.pos));
+                    return true;
+                } else {
+                    nowtags.setStatus(tag.WorkStatus.jump);
+                }
             }
             nowtags = nowtags.getNext();
         }

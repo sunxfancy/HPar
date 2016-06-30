@@ -1,6 +1,5 @@
 package org.hpar;
 
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.PartParser;
 
@@ -61,14 +60,19 @@ class Job implements Runnable {
     @Override
     public void run() {
         do {
-            if (tags.getStatus() == tag.WorkStatus.undo){
-                tags.setStatus(tag.WorkStatus.doing);
-
+            if (tags.status == tag.WorkStatus.undo){
+                synchronized (tags.sync_status) {
+                    if (tags.status == tag.WorkStatus.undo)
+                        tags.status = tag.WorkStatus.doing;
+                    else
+                        return;
+                }
 //                System.out.println("Job run：" + tags.pos);
                 Element element = null;
                 try {
                     element = PartParser.parse(data, tags.pos, tags);
                 } catch (Exception e) {
+                    System.out.println("error");
                     e.printStackTrace();
                 } finally {
 //                    System.out.println("Done." + tags.pos);
