@@ -29,30 +29,33 @@ public class ParallelJsoupTest extends TestCase {
 
     public void testParse() throws Exception {
         String data = App.readFile("src/test/extern/LangRef.html");
+        for (int t = 1; t <= 8; ++t) {
+            System.out.println("\n线程数"+t);
+            ParallelJsoup pj = new ParallelJsoup(data, t);
+            Document document = pj.parse();
+            Document d = Parser.parse(data, "");
+            double time = 0, time_n = 0;
+            pj = new ParallelJsoup(data);
 
-        ParallelJsoup pj = new ParallelJsoup(data);
-        Document document = pj.parse();
-        Document d = Parser.parse(data, "");
-        double time=0, time_n = 0;
-        pj = new ParallelJsoup(data);
-
-        long b, e;
-        for (int i = 0; i < 100; i++) {
+            long b, e;
+            for (int i = 0; i < 100; i++) {
 //        while (true) {
-            b = System.nanoTime();
-            document = pj.parse();
-            e = System.nanoTime();
-            time += e-b;
-            b = System.nanoTime();
-            d = Parser.parse(data, "");
-            e = System.nanoTime();
-            time_n += e-b;
+                b = System.nanoTime();
+                document = pj.parse();
+                e = System.nanoTime();
+                time += e - b;
+                b = System.nanoTime();
+                d = Parser.parse(data, "");
+                e = System.nanoTime();
+                time_n += e - b;
+            }
+
+            assertNotNull(document);
+            System.out.println("ParallelCost: " + time / 1000000 + "ms");
+            System.out.println("NormalCost: " + time_n / 1000000 + "ms");
+            System.out.println("SpeedUp: " + time_n/time);
+            pj.worker.printThreadSummraize();
+            assertTrue(d.hasSameValue(document));
         }
-
-        assertNotNull(document);
-
-        System.out.println("TimeCost: "+time/time_n);
-        pj.worker.printThreadSummraize();
-        assertTrue(d.hasSameValue(document));
     }
 }

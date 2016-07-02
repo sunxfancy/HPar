@@ -17,6 +17,11 @@ public class ParallelJsoup {
         this.data = data;
         worker = new Worker(data.toCharArray(), threads);
     }
+    public ParallelJsoup(String data, int t) {
+        this.data = data;
+        worker = new Worker(data.toCharArray(), t);
+    }
+
 
     private tag lastt;
 

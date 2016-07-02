@@ -31,14 +31,14 @@ public class Worker {
         System.out.println("完成的任务数：" + pool.getTaskCount());
         System.out.println("峰值线程数" + pool.getLargestPoolSize());
 
-        for (tag t = mainJob.tags; t.pos != -1; t = t.getNext()) {
-            if (t.getStatus() != tag.WorkStatus.done) {
-                continue;
-            }
-            if (t.pos != 0)
-            System.out.println(t.pos + " - " + t.end);
+//        for (tag t = mainJob.tags; t.pos != -1; t = t.getNext()) {
+//            if (t.getStatus() != tag.WorkStatus.done) {
+//                continue;
+//            }
+//            if (t.pos != 0)
+//            System.out.println(t.pos + " - " + t.end);
 //            System.out.println(String.copyValueOf(data, t.pos, t.end - t.pos));
-        }
+//        }
     }
 
 
