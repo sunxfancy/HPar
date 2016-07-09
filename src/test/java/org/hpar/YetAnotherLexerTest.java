@@ -35,7 +35,6 @@ public class YetAnotherLexerTest extends TestCase {
         lexer.callback = (tag t) -> {
             if (t.pos - lastt.pos >= span && t.getStatus() == tag.WorkStatus.undo) {
                 assert (data.charAt(t.pos) == '<' && data.charAt(t.pos + t.size -1) == '>' );
-                System.out.println(data.substring(t.pos, t.pos+t.size));
                 lastt = t;
             }
         };
