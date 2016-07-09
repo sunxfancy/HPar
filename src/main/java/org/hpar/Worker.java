@@ -43,17 +43,18 @@ public class Worker {
 
 
     public Element getAll() {
-        return mainJob.tags.getElement();
+        return mainJob.begin_tag.getElement();
     }
 }
 
 
 class Job implements Runnable {
+    tag begin_tag;
     tag tags;
     private char[] data;
 
     public Job(tag tags, char[] data) {
-        this.tags = tags;
+        this.begin_tag = this.tags = tags;
         this.data = data;
     }
 
@@ -80,7 +81,7 @@ class Job implements Runnable {
                     tags.setStatus(tag.WorkStatus.done);
                 }
             }
-            if (tags.pos == 0 && tags.getNext().pos == -1) break;
+            if (tags.pos == 0 && tags.getNext().pos == -1) return;
             tags = tags.getNext();
         } while (tags !=null && tags.getStatus() != tag.WorkStatus.done
                 && tags.getStatus() != tag.WorkStatus.doing);
