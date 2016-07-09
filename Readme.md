@@ -32,10 +32,10 @@ HPar can be used as a normal Jsoup library. For parallaled HTML parsing, you nee
 ```java
 String data = "<html></html>";
 
-# new Parser (or using new ParallelJsoup(data, threads_num) to set thread number)
+// new Parser (or using new ParallelJsoup(data, threads_num) to set thread number)
 ParallelJsoup pj = new ParallelJsoup(data);
 
-# parse HTML
+// parse HTML
 Document document = pj.parse();
 
 ```
