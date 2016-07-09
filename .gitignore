@@ -23,5 +23,5 @@ gen
 
 target/
 
-src/test/extern/1.html
-src/test/extern/2.html
+src/test/extern/d1.html
+src/test/extern/d2.html

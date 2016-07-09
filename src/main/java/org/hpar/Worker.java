@@ -59,7 +59,7 @@ class Job implements Runnable {
 
     @Override
     public void run() {
-        do {
+        //do {
             if (tags.status == tag.WorkStatus.undo){
                 synchronized (tags.sync_status) {
                     if (tags.status == tag.WorkStatus.undo)
@@ -80,9 +80,9 @@ class Job implements Runnable {
                     tags.setStatus(tag.WorkStatus.done);
                 }
             }
-            if (tags.pos == 0 && tags.getNext().pos == -1) break;
-            tags = tags.getNext();
-        } while (tags !=null && tags.getStatus() != tag.WorkStatus.done
-                && tags.getStatus() != tag.WorkStatus.doing);
+         //   if (tags.pos == 0 && tags.getNext().pos == -1) break;
+         //   tags = tags.getNext();
+        //} while (tags !=null && tags.getStatus() != tag.WorkStatus.done
+        //        && tags.getStatus() != tag.WorkStatus.doing);
     }
 }
