@@ -12,8 +12,8 @@ This benchmark tested on Linux, Intel® Core™ i7-4710MQ CPU @ 2.50GHz × 8.
 
 # Dependencies
 
-jsoup 1.9.1
-junit 3.8.1
+* jsoup-1.9.1
+* junit-3.8.1
 
 # Build
 
