@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Worker {
     private ExecutorService threadPool;
     private char[] data;
-    Job mainJob;
+    Job mainJob = null;
     public Worker(char[] data, int n) {
         this.data = data;
         this.threadPool = Executors.newFixedThreadPool(n);

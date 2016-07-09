@@ -34,16 +34,13 @@ public class ParallelJsoup {
             }
         };
         tag t = new tag(0, 0, tag.other_begin);
-        tags = t;
-        lexer.tail = lexer.tags = t;
-        lastt = t;
+        this.lastt = this.tags = lexer.tail = lexer.tags = t;
         worker.run(t);
         lexer.find();
         Element e = worker.getAll();
         if (!(e instanceof Document)) {
 			System.out.println("Error: Element is not a instance of Document");
 			System.out.println(worker.mainJob.tags);
-
             System.out.println(e);
         }
         return (Document)e;
