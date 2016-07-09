@@ -22,3 +22,6 @@ out
 gen
 
 target/
+
+src/test/extern/1.html
+src/test/extern/2.html

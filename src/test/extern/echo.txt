@@ -1,6 +1,0 @@
-469c469,471
-<   <style type="text/css">.yesscript {display: none;}</style>
----
->   <noscript>
->    <style type="text/css">.yesscript {display: none;}</style>
->   </noscript>
