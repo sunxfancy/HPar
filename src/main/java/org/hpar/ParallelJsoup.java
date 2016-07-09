@@ -42,6 +42,8 @@ public class ParallelJsoup {
         Element e = worker.getAll();
         if (!(e instanceof Document)) {
 			System.out.println("Error: Element is not a instance of Document");
+			System.out.println(worker.mainJob.tags);
+
             System.out.println(e);
         }
         return (Document)e;

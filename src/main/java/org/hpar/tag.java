@@ -81,6 +81,10 @@ public class tag {
         this.type = type;
     }
 
+	public String toString() {
+		return "pos: " + pos + ", size: " + size + "\n";
+	}
+
     static final int script_begin = 1;
     static final int script_end = 2;
     static final int comment_begin = 3;
