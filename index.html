@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="author" content="sxf" />
+        <title>HPar - A Parallel Html5 Parser based on Jsoup</title>
+        <meta name="description" content="HPar - A Parallel Html5 Parser based on Jsoup" />
+    	<meta name="keywords"  content="hpar,parallel,html,parser,jsoup" />
+    	<meta name="Resource-type" content="Document" />
+
+        <link rel="stylesheet" href="css/jquery.fullPage.css" media="screen" charset="utf-8">
+        <style>
+        	/* Style for our header texts
+        	* --------------------------------------- */
+        	h1{
+        		font-size: 5em;
+        		font-family: arial,helvetica;
+        		color: #fff;
+        		margin:0;
+        	}
+
+            a {
+              color: #1e6bb8;
+              text-decoration: none; }
+            a:hover {
+                text-decoration: underline; }
+
+            .btn {
+              display: inline-block;
+              margin-bottom: 1rem;
+              color: rgba(255, 255, 255, 0.7);
+              background-color: rgba(255, 255, 255, 0.08);
+              border-color: rgba(255, 255, 255, 0.2);
+              border-style: solid;
+              border-width: 1px;
+              border-radius: 0.3rem;
+              transition: color 0.2s, background-color 0.2s, border-color 0.2s; }
+
+            .btn + .btn {
+                margin-left: 1rem; }
+
+            .btn:hover {
+              color: rgba(255, 255, 255, 0.8);
+              text-decoration: none;
+              background-color: rgba(255, 255, 255, 0.2);
+              border-color: rgba(255, 255, 255, 0.3); }
+
+              @media screen and (min-width: 64em) {
+                .btn {
+                  padding: 0.75rem 1rem; } }
+
+              @media screen and (min-width: 42em) and (max-width: 64em) {
+                .btn {
+                  padding: 0.6rem 0.9rem;
+                  font-size: 0.9rem; } }
+
+              @media screen and (max-width: 42em) {
+                .btn {
+                  display: block;
+                  width: 100%;
+                  padding: 0.75rem;
+                  font-size: 0.9rem; }
+                  .btn + .btn {
+                    margin-top: 1rem;
+                    margin-left: 0; } }
+
+
+        	.intro p{
+        		color: #fff;
+        	}
+
+        	/* Centered texts in each section
+        	* --------------------------------------- */
+        	.section{
+        		text-align:center;
+        	}
+
+        	/* Overwriting styles for control arrows for slides
+        	* --------------------------------------- */
+        	.controlArrow.prev {
+        		left: 50px;
+        	}
+        	.controlArrow.next{
+        		right: 50px;
+        	}
+
+        	/* Bottom menu
+        	* --------------------------------------- */
+        	#infoMenu li a {
+        		color: #fff;
+        	}
+    	</style>
+    </head>
+    <body>
+        <a href="https://github.com/sunxfancy/HPar">
+            <img style="position: fixed;z-index:99; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub">
+        </a>
+        <div id="fullpage">
+        	<div class="section" id="section0">
+        		<div class="intro">
+                    <h1>HPar</h1>
+        			<p>A Parallel HTML5 Parser based on Jsoup</p>
+                    <a id='download-jar' href="#" class="btn">Download .jar</a>
+                    <a href="https://github.com/sunxfancy/HPar/zipball/master" class="btn">Download Source .zip</a>
+                    <a href="https://github.com/sunxfancy/HPar/tarball/master" class="btn">Download Source .tar.gz</a>
+        		</div>
+        	</div>
+        	<div class="section" id="section1">
+    			<div class="intro">
+    				<h1>Parallel - So fast</h1>
+    				<p>On the MacBook Pro with four cores, HPar achieves speedups as high as 2.4x. Its average speedup is 1.73x.</p>
+    			</div>
+        	</div>
+        	<div class="section" id="section2">
+        		<div class="intro">
+        			<h1>Enjoy it</h1>
+        		</div>
+        	</div>
+        </div>
+
+        <script src="js/jquery-1.11.1.min.js" type="text/javascript"></script>
+        <script type="text/javascript" src="js/jquery.fullPage.min.js"></script>
+    	<script type="text/javascript">
+    		$(document).ready(function() {
+
+                // get some information from Github api
+                $.get('https://api.github.com/repos/sunxfancy/HPar/releases/latest', function(data) {
+                    $('#download-jar').attr('href',data.assets[0].browser_download_url);
+                });
+
+    			$('#fullpage').fullpage({
+    				anchors: ['firstPage', 'secondPage', '3rdPage'],
+    				sectionsColor: ['#1B6C9B', '#7cb75e', '#7E8F7C'],
+    				navigation: true,
+    				navigationPosition: 'right',
+    				navigationTooltips: ['First', 'Second', 'Third']
+    			});
+    		});
+    	</script>
+    </body>
+</html>
