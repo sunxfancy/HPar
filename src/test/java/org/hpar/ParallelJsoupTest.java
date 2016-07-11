@@ -27,7 +27,7 @@ public class ParallelJsoupTest extends TestCase {
         assertTrue(d.hasSameValue(document));
     }
 
-    public void testPerformance() throws Exception {
+    public void gtestPerformance() throws Exception {
         String data = App.readFile("src/test/extern/files/10.html");
         for (int t = 1; t <= 16; ++t) {
             System.out.println("\n线程数"+t);
