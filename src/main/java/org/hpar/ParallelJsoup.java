@@ -11,15 +11,18 @@ public class ParallelJsoup {
     tag tags;
     String data;
     Worker worker;
-    public static final int span = 1024*10;
-    public static final int threads = 8;
+    int span = 1024*100;
+    int threads = 8;
     public ParallelJsoup(String data) {
         this.data = data;
+//        span = data.length() / (threads+2);
         worker = new Worker(data.toCharArray(), threads);
     }
     public ParallelJsoup(String data, int t) {
         this.data = data;
-        worker = new Worker(data.toCharArray(), t);
+        this.threads = t;
+//        span = data.length() / (threads+2);
+        worker = new Worker(data.toCharArray(), threads);
     }
 
 

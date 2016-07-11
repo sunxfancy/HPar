@@ -21,6 +21,7 @@ hs_err_pid*
 out
 gen
 
+gh-pages/
 target/
 
 src/test/extern/d1.html
