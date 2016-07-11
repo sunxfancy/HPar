@@ -12,7 +12,7 @@ import java.io.FileWriter;
  */
 public class ParallelJsoupTest extends TestCase {
     public void testOne() throws Exception {
-        String data = App.readFile("src/test/extern/websites/5.html");
+        String data = App.readFile("src/test/extern/websites/1.html");
 
         ParallelJsoup pj = new ParallelJsoup(data);
         Document document = pj.parse();
@@ -28,17 +28,16 @@ public class ParallelJsoupTest extends TestCase {
     }
 
     public void testPerformance() throws Exception {
-        String data = App.readFile("src/test/extern/LangRef.html");
-        for (int t = 1; t <= 8; ++t) {
+        String data = App.readFile("src/test/extern/files/10.html");
+        for (int t = 1; t <= 16; ++t) {
             System.out.println("\n线程数"+t);
             ParallelJsoup pj = new ParallelJsoup(data, t);
             Document document = pj.parse();
             Document d = Parser.parse(data, "");
             double time = 0, time_n = 0;
-            pj = new ParallelJsoup(data);
 
             long b, e;
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 100; i++) {
 //        while (true) {
                 b = System.nanoTime();
                 document = pj.parse();
@@ -69,7 +68,6 @@ public class ParallelJsoupTest extends TestCase {
 //            Document document = pj.parse();
 //            Document d = Parser.parse(data, "");
 //            double time = 0, time_n = 0;
-//            pj = new ParallelJsoup(data);
 //
 //            long b, e;
 //            for (int i = 0; i < 100; i++) {

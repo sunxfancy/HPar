@@ -3,21 +3,21 @@ package org.hpar;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.PartParser;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 /**
  *
  * Created by sxf on 4/30/16.
  */
 public class Worker {
-    private ExecutorService threadPool;
+    private ThreadPoolExecutor threadPool;
     private char[] data;
     Job mainJob = null;
     public Worker(char[] data, int n) {
         this.data = data;
-        this.threadPool = Executors.newFixedThreadPool(n);
+        this.threadPool = new ThreadPoolExecutor(n, n,
+                1000L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>());
     }
 
     public void run(tag t) {
@@ -27,7 +27,7 @@ public class Worker {
     }
 
     public void printThreadSummraize() {
-        ThreadPoolExecutor pool = (ThreadPoolExecutor) threadPool;
+        ThreadPoolExecutor pool = threadPool;
         System.out.println("完成的任务数：" + pool.getTaskCount());
         System.out.println("峰值线程数" + pool.getLargestPoolSize());
 
