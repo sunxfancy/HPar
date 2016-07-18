@@ -4,20 +4,38 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 /**
- *
+ * Basic Class for HPar.
+ * Used for creating the parser and running the paralleled method
+ * e.g.
+ * String data = "<html></html>";
+ * // a new paralleled Jsoup with 8 threads
+ * ParallelJsoup pj = new ParallelJsoup(data, 8);
+ * // parsing the HTML data
+ * Document document = pj.parse();
  * Created by sxf on 5/1/16.
  */
 public class ParallelJsoup {
     tag tags;
     String data;
     Worker worker;
-    int span = 1024*100;
+    int span = 1024*10;
     int threads = 8;
+
+    /**
+     * Constructor of HPar
+     * @param data the HTML string
+     */
     public ParallelJsoup(String data) {
         this.data = data;
 //        span = data.length() / (threads+2);
         worker = new Worker(data.toCharArray(), threads);
     }
+
+    /**
+     * Constructor of HPar
+     * @param data the HTML string
+     * @param t the highest threads number
+     */
     public ParallelJsoup(String data, int t) {
         this.data = data;
         this.threads = t;
@@ -26,8 +44,13 @@ public class ParallelJsoup {
     }
 
 
+
     private tag lastt;
 
+    /**
+     * Begin parsing
+     * @return Document in Jsoup, error for null
+     */
     public Document parse() {
         YetAnotherLexer lexer = new YetAnotherLexer(data);
         lexer.callback = (tag t) -> {

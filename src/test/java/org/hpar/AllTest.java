@@ -18,7 +18,7 @@ public class AllTest extends TestCase {
     int all = 0;
     public void testAll() {
         k = 0;
-        loadAllFiles("src/test/extern/websites");
+        loadAllFiles("src/test/extern/benchmarks");
         System.out.println("正确率： " + k*100/all + "%");
         System.out.println("崩溃率： " + (all-p)*100/all + "%");
     }
@@ -31,7 +31,7 @@ public class AllTest extends TestCase {
         for(File file : files) {
             System.out.println(file.getAbsolutePath());
             try {
-                loadOneFile(file.getAbsolutePath());
+                LoadOne(file.getAbsolutePath());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -60,5 +60,35 @@ public class AllTest extends TestCase {
         } else {
             k++;
         }
+    }
+
+
+    private void LoadOne(String path) throws Exception {
+        String data = App.readFile(path);
+
+        ParallelJsoup pj = new ParallelJsoup(data, 8);
+        Document document = pj.parse();
+        Document d = Parser.parse(data, "");
+        double time = 0, time_n = 0;
+
+        long b, e;
+        for (int i = 0; i < 100; i++) {
+//        while (true) {
+            b = System.nanoTime();
+            document = pj.parse();
+            e = System.nanoTime();
+            time += e - b;
+            b = System.nanoTime();
+            d = Parser.parse(data, "");
+            e = System.nanoTime();
+            time_n += e - b;
+        }
+
+        assertNotNull(document);
+        System.out.println("ParallelCost: " + time / 1000000 + "ms");
+        System.out.println("NormalCost: " + time_n / 1000000 + "ms");
+        System.out.println("SpeedUp: " + time_n/time);
+        pj.worker.printThreadSummraize();
+        assertTrue(d.hasSameValue(document));
     }
 }
