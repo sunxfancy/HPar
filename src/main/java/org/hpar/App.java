@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.*;
 /**
  * The App class
- *
+ * Used for console working
  */
 public class App
 {
