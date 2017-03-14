@@ -45,6 +45,10 @@ public class Worker {
     public Element getAll() {
         return mainJob.begin_tag.getElement();
     }
+
+    public void closeAll() {
+        threadPool.shutdown();
+    }
 }
 
 
@@ -60,6 +64,11 @@ class Job implements Runnable {
 
     @Override
     public void run() {
+        if (begin_tag.pos == 0) {
+            Thread.currentThread().setPriority(Thread.NORM_PRIORITY - 3);
+        } else {
+            Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+        }
         do {
             if (tags.status == tag.WorkStatus.undo){
                 synchronized (tags.sync_status) {

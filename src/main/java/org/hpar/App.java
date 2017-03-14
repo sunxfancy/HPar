@@ -19,7 +19,7 @@ public class App
             e.printStackTrace();
         }
 
-        ParallelJsoup pp = new ParallelJsoup(data);
+        ParallelJsoup pp = new ParallelJsoup(data.toCharArray());
         Document dd = pp.parse();
 	    System.out.println(dd);
     }

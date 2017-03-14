@@ -19,10 +19,10 @@ public class YetAnotherLexer {
     tag tags = null;
     tag tail = null;
 
-    public YetAnotherLexer(String data) {
-        this.data = data.toCharArray();
+    public YetAnotherLexer(char[] data) {
+        this.data = data;
         this.data_begin = 0;
-        this.data_end = data.length();
+        this.data_end = data.length;
         reset();
     }
 

@@ -30,12 +30,16 @@ public class YetAnotherLexerTest extends TestCase {
     private tag lastt;
     int span = 0;
     private void loadOneFile(String path) throws IOException {
-        String data = App.readFile(path);
-        YetAnotherLexer lexer = new YetAnotherLexer(data);
-        lexer.callback = (tag t) -> {
-            if (t.pos - lastt.pos >= span && t.getStatus() == tag.WorkStatus.undo) {
-                assert (data.charAt(t.pos) == '<' && data.charAt(t.pos + t.size -1) == '>' );
-                lastt = t;
+        final String data = App.readFile(path);
+        YetAnotherLexer lexer = new YetAnotherLexer(data.toCharArray());
+        lexer.callback = new YetAnotherLexer.Callback() {
+
+            @Override
+            public void find(tag t) {
+                if (t.pos - lastt.pos >= span && t.getStatus() == tag.WorkStatus.undo) {
+                    assert (data.charAt(t.pos) == '<' && data.charAt(t.pos + t.size - 1) == '>');
+                    lastt = t;
+                }
             }
         };
         tag t = new tag(0, 0, tag.other_begin);

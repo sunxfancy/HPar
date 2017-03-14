@@ -1,6 +1,5 @@
 package org.hpar;
 
-import junit.framework.TestCase;
 import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
 
@@ -11,16 +10,16 @@ import java.io.IOException;
  * for all tests
  * Created by sxf on 4/6/16.
  */
-public class AllTest extends TestCase {
+public class AllTestRunner{
 
     int k = 0;
     int p = 0;
     int all = 0;
-    public void testAll() {
-        k = 0;
-        loadAllFiles("src/test/extern/benchmarks");
-        System.out.println("正确率： " + k*100/all + "%");
-        System.out.println("崩溃率： " + (all-p)*100/all + "%");
+    public static void main(String... args) {
+        AllTestRunner test = new AllTestRunner();
+        test.k = 0;
+        test.loadAllFiles(args[0]);
+        System.out.println("正确率： " + test.k*100/test.all + "%");
     }
 
     public void loadAllFiles(String filePath) {
@@ -28,9 +27,7 @@ public class AllTest extends TestCase {
         File[] files = f.listFiles(); // 得到f文件夹下面的所有文件。
         assert files != null;
         all = files.length;
-//        while(true)
         for(File file : files) {
-            System.out.println(file.getAbsolutePath());
             try {
                 LoadOne(file.getAbsolutePath());
             } catch (Exception e) {
@@ -65,12 +62,11 @@ public class AllTest extends TestCase {
 
 
     private void LoadOne(String path) throws Exception {
-        String str = App.readFile(path);
-        char[] data = str.toCharArray();
+        String data = App.readFile(path);
 
-        ParallelJsoup pj = new ParallelJsoup(data, 8);
+        ParallelJsoup pj = new ParallelJsoup(data.toCharArray(), 8);
         Document document = pj.parse();
-        Document d = Parser.parse(str, "");
+        Document d = Parser.parse(data, "");
         double time = 0, time_n = 0;
 
         long b, e;
@@ -81,17 +77,21 @@ public class AllTest extends TestCase {
             e = System.nanoTime();
             time += e - b;
             b = System.nanoTime();
-            d = Parser.parse(str, "");
+            d = Parser.parse(data, "");
             e = System.nanoTime();
             time_n += e - b;
         }
 
-        assertNotNull(document);
+        System.out.println(path);
         System.out.println("ParallelCost: " + time / 1000000 + "ms");
         System.out.println("NormalCost: " + time_n / 1000000 + "ms");
         System.out.println("SpeedUp: " + time_n/time);
+        System.out.println();
+
         pj.worker.printThreadSummraize();
         pj.closeAll();
-        assertTrue(d.hasSameValue(document));
+        if (d.hasSameValue(document)) {
+            k++;
+        }
     }
 }

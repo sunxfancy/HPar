@@ -16,19 +16,19 @@ import org.jsoup.nodes.Element;
  */
 public class ParallelJsoup {
     tag tags;
-    String data;
+    char[] data;
     Worker worker;
-    int span = 1024*10;
+    int span = 1024*3;
     int threads = 8;
 
     /**
      * Constructor of HPar
      * @param data the HTML string
      */
-    public ParallelJsoup(String data) {
+    public ParallelJsoup(char[] data) {
         this.data = data;
 //        span = data.length() / (threads+2);
-        worker = new Worker(data.toCharArray(), threads);
+        worker = new Worker(data, threads);
     }
 
     /**
@@ -36,11 +36,11 @@ public class ParallelJsoup {
      * @param data the HTML string
      * @param t the highest threads number
      */
-    public ParallelJsoup(String data, int t) {
+    public ParallelJsoup(char[] data, int t) {
         this.data = data;
         this.threads = t;
 //        span = data.length() / (threads+2);
-        worker = new Worker(data.toCharArray(), threads);
+        worker = new Worker(data, threads);
     }
 
 
@@ -53,15 +53,19 @@ public class ParallelJsoup {
      */
     public Document parse() {
         YetAnotherLexer lexer = new YetAnotherLexer(data);
-        lexer.callback = (tag t) -> {
-            if (t.pos - lastt.pos >= span && t.getStatus() == tag.WorkStatus.undo) {
-                worker.run(t);
-                lastt = t;
+        lexer.callback = new YetAnotherLexer.Callback() {
+            @Override
+            public void find(tag t) {
+                if (t.pos - lastt.pos >= span && t.getStatus() == tag.WorkStatus.undo) {
+                    worker.run(t);
+                    lastt = t;
+                }
             }
         };
         tag t = new tag(0, 0, tag.other_begin);
         this.lastt = this.tags = lexer.tail = lexer.tags = t;
         worker.run(t);
+        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         lexer.find();
         Element e = worker.getAll();
         if (!(e instanceof Document)) {
@@ -70,5 +74,9 @@ public class ParallelJsoup {
             System.out.println(e);
         }
         return (Document)e;
+    }
+
+    public void closeAll() {
+        worker.closeAll();
     }
 }
